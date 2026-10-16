@@ -25,7 +25,7 @@ enum Catalog {
             id: "02-attributes",
             title: "Attributes",
             summary: "@Attribute options, external storage, and original names.",
-            scenarios: []
+            scenarios: attributes
         ),
         CatalogFeature(
             id: "03-relationships",
@@ -250,6 +250,113 @@ enum Catalog {
             teaches: [
                 "A schema can hold several model classes at once.",
                 "The screen joins them. The models still do not point at each other."
+            ]
+        )
+    ]
+
+    private static let attributes: [CatalogScenario] = [
+        CatalogScenario(
+            id: "01-lucanas-ear-mark",
+            title: "Lucanas ear mark",
+            teaches: [
+                "@Attribute(.unique) marks one stored property.",
+                "The entity's uniqueness constraints list that property."
+            ]
+        ),
+        CatalogScenario(
+            id: "02-arequipa-weigh-photo",
+            title: "Arequipa weigh photo",
+            teaches: [
+                "@Attribute(.externalStorage) marks a Data value to be kept outside the row.",
+                "The bytes still come back on the model after a save."
+            ]
+        ),
+        CatalogScenario(
+            id: "03-puno-lot-spotlight",
+            title: "Puno lot spotlight",
+            teaches: [
+                "@Attribute(.spotlight) marks a property for Spotlight.",
+                "The mark is on the attribute. This in-memory store is not a Spotlight catalog."
+            ]
+        ),
+        CatalogScenario(
+            id: "04-sucre-dye-note",
+            title: "Sucre dye note",
+            teaches: [
+                "@Attribute(.allowsCloudEncryption) marks a property that a synced store may encrypt.",
+                "The mark is on the attribute. This store does not sync."
+            ]
+        ),
+        CatalogScenario(
+            id: "05-lucanas-agreed-price",
+            title: "Lucanas agreed price",
+            teaches: [
+                "@Attribute(.preserveValueOnDeletion) marks a value to be kept if the row is deleted.",
+                "The mark is on the attribute."
+            ]
+        ),
+        CatalogScenario(
+            id: "06-arequipa-renamed-kilos",
+            title: "Arequipa renamed kilos",
+            teaches: [
+                "originalName records the column's previous name.",
+                "A property with no original name stores an empty original name."
+            ]
+        ),
+        CatalogScenario(
+            id: "07-arequipa-ledger-reprint",
+            title: "Arequipa ledger reprint",
+            teaches: [
+                "hashModifier is stored on the attribute.",
+                "A property with no hash modifier leaves that field nil."
+            ]
+        ),
+        CatalogScenario(
+            id: "08-la-paz-spoken-markup",
+            title: "La Paz spoken markup",
+            teaches: [
+                "@Attribute(.ephemeral) is omitted from the filed row.",
+                "The attribute is not reported as transient."
+            ]
+        ),
+        CatalogScenario(
+            id: "09-tarabuco-micron-reading",
+            title: "Tarabuco micron reading",
+            teaches: [
+                "@Attribute(.transformable) names a ValueTransformer for a custom class.",
+                "transformedValueClass() returns that class, and the reading survives a save."
+            ]
+        ),
+        CatalogScenario(
+            id: "10-puno-bale-code",
+            title: "Puno bale code",
+            teaches: [
+                "One property can carry more than one attribute option.",
+                "PU-77 is unique and marked for Spotlight."
+            ]
+        ),
+        CatalogScenario(
+            id: "11-puno-seal-and-photo",
+            title: "Puno seal and photo",
+            teaches: [
+                "Two Data properties on one model can be stored differently.",
+                "The wax seal stays inline. The scale photo is external."
+            ]
+        ),
+        CatalogScenario(
+            id: "12-lucanas-second-card",
+            title: "Lucanas second card",
+            teaches: [
+                "Saving a second model with the same unique value keeps one row.",
+                "That row keeps the first identity and takes the new values."
+            ]
+        ),
+        CatalogScenario(
+            id: "13-la-paz-morning-folder",
+            title: "La Paz morning folder",
+            teaches: [
+                "One schema can hold several models, each with its own attribute marks.",
+                "The folder is the screen. The marks stay on the attributes."
             ]
         )
     ]
