@@ -81,3 +81,25 @@ Shown in [Besançon supper card](features/03-relationships/07-besancon-supper-ca
 **What to do.** Treat a non-empty original name as a previous name on the relationship that carries `@Relationship`. On an inverse that does not carry the macro, the stored original name is the property name.
 
 Shown in [Rousses renamed rack](features/03-relationships/10-rousses-renamed-rack/).
+
+## Delete rules
+
+### A deny rule still saves the deletion
+
+**What happens.** `CopperStill.cooks` is `@Relationship(deleteRule: .deny)`. Cook QS-22 is on that list. The still is deleted and the context is saved. The save throws nothing. A new context finds no still. It finds the cook, and the cook's still line is empty.
+
+**Why it matters.** The rule name says the deletion should be refused while a cook is charged. This store deletes the still anyway.
+
+**What to do.** Read `deleteRule` when you need the stored mark. After the save, fetch the cook if the desk still needs it. Do not treat deny as a guard in this store.
+
+Shown in [Qamsar copper still](features/04-delete-rules/06-qamsar-copper-still/).
+
+### A noAction rule leaves the related mark with an empty link
+
+**What happens.** `WallTally.marks` is `@Relationship(deleteRule: .noAction)`. The tally is deleted and the context is saved. The save throws nothing. A new context finds no tally. It finds chalk mark QS-22, and that mark's tally is nil.
+
+**Why it matters.** No action does not leave the mark pointing at the deleted tally. The link is empty, and the mark stays.
+
+**What to do.** Read the stored rule when the name matters. After the save, read the mark from a new context. Its tally line is empty.
+
+Shown in [Qamsar wall tally](features/04-delete-rules/07-qamsar-wall-tally/).
