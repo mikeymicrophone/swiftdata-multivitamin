@@ -149,6 +149,32 @@ struct CatalogView: View {
             AgedCaveScreen()
         case "13-besancon-morning-folder":
             ComteHandoverScreen()
+        case "01-qamsar-terrace-book":
+            HarvestBookScreen()
+        case "02-qamsar-filled-jar":
+            FilledJarScreen()
+        case "03-qamsar-cook-slips":
+            CookBatchScreen()
+        case "04-qamsar-torn-slip":
+            TornSlipScreen()
+        case "05-kashan-seal-chit":
+            SealChitScreen()
+        case "06-qamsar-copper-still":
+            CopperStillScreen()
+        case "07-qamsar-wall-tally":
+            WallTallyScreen()
+        case "08-qamsar-cook-and-still":
+            CookAndStillScreen()
+        case "09-qamsar-correction-line":
+            CorrectionLineScreen()
+        case "10-yazd-wedding-tray":
+            WeddingTrayScreen()
+        case "11-yazd-sister-jar":
+            SisterJarScreen()
+        case "12-qamsar-blank-card":
+            BlankCardScreen()
+        case "13-yazd-morning-folder":
+            RosewaterHandoverScreen()
         default:
             Text("That scenario is not bottled.")
                 .foregroundStyle(.secondary)

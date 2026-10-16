@@ -37,7 +37,7 @@ enum Catalog {
             id: "04-delete-rules",
             title: "Delete rules",
             summary: "What happens to related records when a model is deleted.",
-            scenarios: []
+            scenarios: deleteRules
         ),
         CatalogFeature(
             id: "05-transient",
@@ -464,6 +464,113 @@ enum Catalog {
             teaches: [
                 "One schema holds the pairs from the route.",
                 "After a save, each inverse still names the other side."
+            ]
+        )
+    ]
+
+    private static let deleteRules: [CatalogScenario] = [
+        CatalogScenario(
+            id: "01-qamsar-terrace-book",
+            title: "Qamsar terrace book",
+            teaches: [
+                "A relationship with no delete rule stores nullify.",
+                "Tearing up the book leaves the harvest ticket, with an empty book line."
+            ]
+        ),
+        CatalogScenario(
+            id: "02-qamsar-filled-jar",
+            title: "Qamsar filled jar",
+            teaches: [
+                ".nullify clears the link and keeps the jar.",
+                "The jar's litres are still on the card after a new context reads it."
+            ]
+        ),
+        CatalogScenario(
+            id: "03-qamsar-cook-slips",
+            title: "Qamsar cook slips",
+            teaches: [
+                ".cascade on the cook deletes the slips with the cook.",
+                "A new context finds neither the cook nor the slips."
+            ]
+        ),
+        CatalogScenario(
+            id: "04-qamsar-torn-slip",
+            title: "Qamsar torn slip",
+            teaches: [
+                "The cook's rule is cascade. The slip's rule back is nullify.",
+                "Tearing up the slip runs the slip's rule, and the cook stays."
+            ]
+        ),
+        CatalogScenario(
+            id: "05-kashan-seal-chit",
+            title: "Kashan seal chit",
+            teaches: [
+                "The cascade sits on the chit, which is the model that is voided.",
+                "Voiding the chit deletes the cook it warrants."
+            ]
+        ),
+        CatalogScenario(
+            id: "06-qamsar-copper-still",
+            title: "Qamsar copper still",
+            teaches: [
+                ".deny is stored on the still's cook list.",
+                "The save still removes the still. The charged cook remains, with an empty still line."
+            ]
+        ),
+        CatalogScenario(
+            id: "07-qamsar-wall-tally",
+            title: "Qamsar wall tally",
+            teaches: [
+                ".noAction is stored on the tally's mark list.",
+                "Wiping the tally leaves the mark, and the mark's tally line is empty."
+            ]
+        ),
+        CatalogScenario(
+            id: "08-qamsar-cook-and-still",
+            title: "Qamsar cook and still",
+            teaches: [
+                "One delete runs cascade on the slips and nullify on the still.",
+                "The slips are gone. The still remains, with an empty cook line."
+            ]
+        ),
+        CatalogScenario(
+            id: "09-qamsar-correction-line",
+            title: "Qamsar correction line",
+            teaches: [
+                "The cook cascades to its slips, and each slip cascades to its correction.",
+                "Voiding the cook removes the slips and the corrections."
+            ]
+        ),
+        CatalogScenario(
+            id: "10-yazd-wedding-tray",
+            title: "Yazd wedding tray",
+            teaches: [
+                "The tray cascades to its place cards.",
+                "Each card's link to the lot is nullify, so the lot and its litres stay."
+            ]
+        ),
+        CatalogScenario(
+            id: "11-yazd-sister-jar",
+            title: "Yazd sister jar",
+            teaches: [
+                ".nullify on the jar clears that jar's line on the lot.",
+                "The lot and the sister jar stay, and the sister jar still names QS-22."
+            ]
+        ),
+        CatalogScenario(
+            id: "12-qamsar-blank-card",
+            title: "Qamsar blank card",
+            teaches: [
+                ".cascade is stored even when the cook has no slips.",
+                "Voiding that card removes the cook, and the save stands."
+            ]
+        ),
+        CatalogScenario(
+            id: "13-yazd-morning-folder",
+            title: "Yazd morning folder",
+            teaches: [
+                "One save deletes four source cards, each under its own rule.",
+                "A new context shows the slips gone, the jar kept, the charged cook kept, and the chalk mark kept."
             ]
         )
     ]

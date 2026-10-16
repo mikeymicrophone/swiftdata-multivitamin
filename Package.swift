@@ -58,13 +58,28 @@ let package = Package(
                 "features/03-relationships/10-rousses-renamed-rack/README.md",
                 "features/03-relationships/11-plasne-guest-reprint/README.md",
                 "features/03-relationships/12-rousses-aged-cave/README.md",
-                "features/03-relationships/13-besancon-morning-folder/README.md"
+                "features/03-relationships/13-besancon-morning-folder/README.md",
+                "features/04-delete-rules/README.md",
+                "features/04-delete-rules/01-qamsar-terrace-book/README.md",
+                "features/04-delete-rules/02-qamsar-filled-jar/README.md",
+                "features/04-delete-rules/03-qamsar-cook-slips/README.md",
+                "features/04-delete-rules/04-qamsar-torn-slip/README.md",
+                "features/04-delete-rules/05-kashan-seal-chit/README.md",
+                "features/04-delete-rules/06-qamsar-copper-still/README.md",
+                "features/04-delete-rules/07-qamsar-wall-tally/README.md",
+                "features/04-delete-rules/08-qamsar-cook-and-still/README.md",
+                "features/04-delete-rules/09-qamsar-correction-line/README.md",
+                "features/04-delete-rules/10-yazd-wedding-tray/README.md",
+                "features/04-delete-rules/11-yazd-sister-jar/README.md",
+                "features/04-delete-rules/12-qamsar-blank-card/README.md",
+                "features/04-delete-rules/13-yazd-morning-folder/README.md"
             ],
             sources: [
                 "App",
                 "features/01-model-basics",
                 "features/02-attributes",
-                "features/03-relationships"
+                "features/03-relationships",
+                "features/04-delete-rules"
             ]
         ),
         .testTarget(
