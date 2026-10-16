@@ -175,6 +175,32 @@ struct CatalogView: View {
             BlankCardScreen()
         case "13-yazd-morning-folder":
             RosewaterHandoverScreen()
+        case "01-sepetci-lump":
+            SepetciLumpScreen()
+        case "02-odunpazari-bowl":
+            CarvedBowlScreen()
+        case "03-wax-whisper":
+            WaxCookScreen()
+        case "04-stem-nick":
+            StemFitScreen()
+        case "05-lattice-scratch":
+            LatticeBowlScreen()
+        case "06-hide-case":
+            HideCaseScreen()
+        case "07-bedesten-aside":
+            BedestenAsideScreen()
+        case "08-bedesten-price":
+            BedestenPriceScreen()
+        case "09-counter-reading":
+            CounterReadingScreen()
+        case "10-twin-lumps":
+            TwinLumpScreen()
+        case "11-two-benches":
+            TwoBenchScreen()
+        case "12-trial-hour":
+            TrialFitScreen()
+        case "13-bedesten-morning":
+            PipeHandoverScreen()
         default:
             Text("That scenario is not bottled.")
                 .foregroundStyle(.secondary)

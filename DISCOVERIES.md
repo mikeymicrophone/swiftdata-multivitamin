@@ -103,3 +103,25 @@ Shown in [Qamsar copper still](features/04-delete-rules/06-qamsar-copper-still/)
 **What to do.** Read the stored rule when the name matters. After the save, read the mark from a new context. Its tally line is empty.
 
 Shown in [Qamsar wall tally](features/04-delete-rules/07-qamsar-wall-tally/).
+
+## Transient
+
+### A transient property can hold a type that is not a column
+
+**What happens.** `LatticeBowl.scratch` is `@Transient`. Its type is `LatticeScratch`, a struct with `openings` and `note`. The schema properties are `bowlName`, `carvedOn`, and `carverName`. The bowl is saved with 14 openings and the note "Stop before the grey". A new context reads bowl name "Lattice egg", 0 openings, and an empty note. The open card still has 14 and the note.
+
+**Why it matters.** That struct has no transformer and is not a stored attribute. Marked transient, it never becomes a column, and the container still opens.
+
+**What to do.** Put the working tally on `@Transient` with a default. Read it from the open card. Read the bowl name from a new context when the desk needs the filed row.
+
+Shown in [Lattice scratch](features/05-transient/05-lattice-scratch/).
+
+### Writing a transient property does not mark the context changed
+
+**What happens.** `BedestenCard` is saved at 4000 lira. The aside is then set to "Emre will collect at dusk". `hasChanges` is false. A second save leaves the fetched price at 4000. A new context reads an empty aside. The open card still has the sentence.
+
+**Why it matters.** A desk that saves only when the context is dirty will not pick up a muttered aside. The aside also never lands in the row.
+
+**What to do.** Keep the aside on the open card. Change a stored property when the book should record something.
+
+Shown in [Bedesten aside](features/05-transient/07-bedesten-aside/).

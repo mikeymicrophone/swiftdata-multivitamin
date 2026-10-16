@@ -10,7 +10,7 @@ SwiftData sibling of
 | Servings per feature | 13 |
 | Features | 21 |
 | Scenarios | 273 |
-| Bottled | 52 |
+| Bottled | 65 |
 | Active ingredient | SwiftData (macOS 14 API) |
 | Catalog | One SwiftUI screen per scenario |
 
@@ -28,8 +28,8 @@ feature carry a job from one desk to the next.
 Every scenario uses real, domain-meaningful names. You will not find
 placeholder names here.
 
-The bottle is not full yet: 21 features, 13 scenarios each, 52 of 273 bottled.
-@Model basics, attributes, relationships, and delete rules are full. The other features are named and waiting.
+The bottle is not full yet: 21 features, 13 scenarios each, 65 of 273 bottled.
+@Model basics, attributes, relationships, delete rules, and @Transient are full. The other features are named and waiting.
 
 ## Run the catalog
 
@@ -63,7 +63,7 @@ features/
 2. [Attributes](features/02-attributes/) — 13 of 13 bottled
 3. [Relationships](features/03-relationships/) — 13 of 13 bottled
 4. [Delete rules](features/04-delete-rules/) — 13 of 13 bottled
-5. @Transient
+5. [@Transient](features/05-transient/) — 13 of 13 bottled
 6. Codable and enum properties
 7. ModelContainer and ModelConfiguration
 8. ModelContext — insert, save, autosave, rollback
