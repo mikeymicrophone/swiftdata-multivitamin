@@ -31,19 +31,22 @@ final class CookBatch {
 }
 
 struct CookBatchScreen: View {
-    private let container = MemoryStore.containerOrCrash(CookBatch.self, TasteSlip.self)
-
     var body: some View {
         CookBatchEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CookBatch.self, TasteSlip.self)
     }
+}
+
+private enum VoidOutcome {
+    case hanging
+    case voided(cooks: Int, slips: Int)
+    case refused(any Error)
 }
 
 private struct CookBatchEditor: View {
     @Environment(\.modelContext) private var modelContext
     @State private var cook: CookBatch?
-    @State private var cookCount = -1
-    @State private var slipCount = -1
+    @State private var outcome = VoidOutcome.hanging
 
     var body: some View {
         ScenarioChrome(
@@ -56,71 +59,74 @@ private struct CookBatchEditor: View {
             ]
         ) {
             if let cook {
-                CookFields(cook: cook, schema: modelContext.container.schema, cookCount: cookCount, slipCount: slipCount)
-                if cookCount < 0 {
-                    Button("Void the cook card") {
-                        voidCook(cook)
-                    }
+                CookFields(cook: cook, rule: rule)
+            }
+            switch outcome {
+            case .hanging where cook == nil:
+                Button("Hang the tasting slips", action: hangSlips)
+            case .hanging:
+                Button("Void the cook card", role: .destructive) {
+                    if let cook { outcome = voidCard(cook) }
                 }
-            } else {
-                Button("Hang the tasting slips") {
-                    hangSlips()
+            case let .voided(cooks, slips):
+                Section("Filed book") {
+                    LabeledContent("Cooks", value: cooks, format: .number)
+                    LabeledContent("Slips", value: slips, format: .number)
+                }
+            case .refused(let error):
+                Section("Not voided") {
+                    Text(error.localizedDescription)
+                        .foregroundStyle(.red)
                 }
             }
+            Section {
+                Text("One of those slips can be torn on its own.")
+                    .foregroundStyle(.secondary)
+            }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
+    }
+
+    private var rule: String {
+        StoredRelationship.named("slips", on: "CookBatch", in: modelContext.container.schema)
+            .map { StoredRelationship.ruleTitle($0.deleteRule) } ?? "Missing"
     }
 
     private func hangSlips() {
         let cook = CookBatch(lotCode: "QS-22", distillerName: "Hossein Nazeri")
-        let clear = TasteSlip(line: "Clear")
-        let rose = TasteSlip(line: "Long rose")
         modelContext.insert(cook)
-        modelContext.insert(clear)
-        modelContext.insert(rose)
-        cook.slips.append(clear)
-        cook.slips.append(rose)
+        for line in ["Clear", "Long rose"] {
+            let slip = TasteSlip(line: line)
+            modelContext.insert(slip)
+            cook.slips.append(slip)
+        }
         try? modelContext.save()
         self.cook = cook
     }
 
-    private func voidCook(_ cook: CookBatch) {
+    private func voidCard(_ cook: CookBatch) -> VoidOutcome {
         modelContext.delete(cook)
-        try? modelContext.save()
-        let filed = ModelContext(modelContext.container)
-        cookCount = ((try? filed.fetch(FetchDescriptor<CookBatch>())) ?? []).count
-        slipCount = ((try? filed.fetch(FetchDescriptor<TasteSlip>())) ?? []).count
+        do {
+            try modelContext.save()
+            return .voided(
+                cooks: try modelContext.freshCount(CookBatch.self),
+                slips: try modelContext.freshCount(TasteSlip.self)
+            )
+        } catch {
+            modelContext.rollback()
+            return .refused(error)
+        }
     }
 }
 
 private struct CookFields: View {
     let cook: CookBatch
-    let schema: Schema
-    let cookCount: Int
-    let slipCount: Int
+    let rule: String
 
     var body: some View {
         Section(cook.lotCode) {
             LabeledContent("Distiller", value: cook.distillerName)
-            LabeledContent("Rule", value: ruleTitle)
+            LabeledContent("Rule", value: rule)
             LabeledContent("Slips", value: cook.slips.map(\.line).joined(separator: ", "))
         }
-        if cookCount >= 0 {
-            Section("Filed book") {
-                LabeledContent("Cooks", value: "\(cookCount)")
-                LabeledContent("Slips", value: "\(slipCount)")
-            }
-        }
-        Section {
-            Text("One of those slips can be torn on its own.")
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    private var ruleTitle: String {
-        guard let rule = StoredRelationship.named("slips", on: "CookBatch", in: schema)?.deleteRule else {
-            return "Missing"
-        }
-        return StoredRelationship.ruleTitle(rule)
     }
 }

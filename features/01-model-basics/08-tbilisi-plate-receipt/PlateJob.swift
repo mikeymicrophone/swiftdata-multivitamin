@@ -23,11 +23,9 @@ final class PlateJob {
 }
 
 struct PlateJobScreen: View {
-    private let container = MemoryStore.containerOrCrash(PlateJob.self)
-
     var body: some View {
         PlateJobEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: PlateJob.self)
     }
 }
 

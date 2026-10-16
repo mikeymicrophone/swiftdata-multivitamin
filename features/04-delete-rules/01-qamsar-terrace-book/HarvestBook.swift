@@ -37,19 +37,17 @@ final class HarvestBook {
 }
 
 struct HarvestBookScreen: View {
-    private let container = MemoryStore.containerOrCrash(HarvestBook.self, RoseTicket.self)
-
     var body: some View {
         HarvestBookEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: HarvestBook.self, RoseTicket.self)
     }
 }
 
 private struct HarvestBookEditor: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var book: HarvestBook?
-    @State private var ticketLine = ""
-    @State private var bookCount = -1
+    @Query private var books: [HarvestBook]
+    @Query(sort: [SortDescriptor(\RoseTicket.cutOn, order: .reverse)]) private var tickets: [RoseTicket]
+    @State private var tornUp = false
 
     var body: some View {
         ScenarioChrome(
@@ -61,75 +59,61 @@ private struct HarvestBookEditor: View {
                 "Tearing up the book leaves the harvest ticket, with an empty book line."
             ]
         ) {
-            if let book {
-                BookFields(book: book, schema: modelContext.container.schema, ticketLine: ticketLine, bookCount: bookCount)
-                if bookCount < 0 {
-                    Button("Tear up the duplicate book") {
-                        tearUp(book)
+            if books.isEmpty && !tornUp {
+                Button("Open the terrace book", action: openBook)
+            } else {
+                Section("Books · rule \(ruleTitle)") {
+                    ForEach(books) { book in
+                        HStack {
+                            LabeledContent(book.deskName, value: book.clerkName)
+                            Button("Tear up", systemImage: "trash", role: .destructive) {
+                                tearUp(book)
+                            }
+                            .labelStyle(.iconOnly)
+                        }
+                    }
+                    if books.isEmpty {
+                        Text("No books on the desk.")
+                            .foregroundStyle(.secondary)
                     }
                 }
-            } else {
-                Button("Open the terrace book") {
-                    openBook()
+                Section("Tickets") {
+                    ForEach(tickets) { ticket in
+                        LabeledContent(ticket.terraceName) {
+                            Text("\(ticket.baskets) baskets, book \(ticket.book?.deskName ?? "empty")")
+                        }
+                    }
                 }
             }
+            Section {
+                Text("Hossein Nazeri fills the first jar from cook QS-22.")
+                    .foregroundStyle(.secondary)
+            }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
+    }
+
+    private var ruleTitle: String {
+        guard let rule = StoredRelationship.named("tickets", on: "HarvestBook", in: modelContext.container.schema)?.deleteRule else {
+            return "missing"
+        }
+        return StoredRelationship.ruleTitle(rule).lowercased()
     }
 
     private func openBook() {
         let book = HarvestBook(deskName: "Upper terrace, Qamsar", clerkName: "Leila Amini")
-        let ticket = RoseTicket(
+        modelContext.insert(book)
+        book.tickets.append(RoseTicket(
             terraceName: "Upper terrace, Qamsar",
             growerName: "Leila Amini",
             baskets: 4,
             cutOn: GregorianDay.date(year: 2026, month: 5, day: 12, timeZoneIdentifier: "Asia/Tehran")
-        )
-        modelContext.insert(book)
-        modelContext.insert(ticket)
-        book.tickets.append(ticket)
+        ))
         try? modelContext.save()
-        self.book = book
     }
 
     private func tearUp(_ book: HarvestBook) {
         modelContext.delete(book)
         try? modelContext.save()
-        let filed = ModelContext(modelContext.container)
-        let tickets = (try? filed.fetch(FetchDescriptor<RoseTicket>())) ?? []
-        let books = (try? filed.fetch(FetchDescriptor<HarvestBook>())) ?? []
-        ticketLine = tickets.first.map { "\($0.baskets) baskets, book \( $0.book?.deskName ?? "empty")" } ?? "No ticket"
-        bookCount = books.count
-    }
-}
-
-private struct BookFields: View {
-    let book: HarvestBook
-    let schema: Schema
-    let ticketLine: String
-    let bookCount: Int
-
-    var body: some View {
-        Section(book.deskName) {
-            LabeledContent("Clerk", value: book.clerkName)
-            LabeledContent("Rule", value: ruleTitle)
-        }
-        if bookCount >= 0 {
-            Section("Filed book") {
-                LabeledContent("Books", value: "\(bookCount)")
-                Text(ticketLine)
-            }
-        }
-        Section {
-            Text("Hossein Nazeri fills the first jar from cook QS-22.")
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    private var ruleTitle: String {
-        guard let rule = StoredRelationship.named("tickets", on: "HarvestBook", in: schema)?.deleteRule else {
-            return "Missing"
-        }
-        return StoredRelationship.ruleTitle(rule)
+        tornUp = true
     }
 }

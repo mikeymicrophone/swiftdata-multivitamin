@@ -15,6 +15,6 @@ On 12 May Leila Amini lists four baskets from the upper terrace in Qamsar. A dup
 
 **Try it**
 
-Open Qamsar terrace book. Open the book, tear it up, and read the filed ticket.
+Open Qamsar terrace book. Open the book, then tear it up from its row. Both lists are `@Query` results, so the book row disappears and the ticket row redraws with an empty book line.
 
 `swift test` locks the rule and the ticket in `terraceBookNullifiesTheTicket`.

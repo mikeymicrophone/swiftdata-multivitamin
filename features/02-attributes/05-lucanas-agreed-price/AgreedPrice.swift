@@ -25,11 +25,9 @@ final class AgreedPrice {
 }
 
 struct AgreedPriceScreen: View {
-    private let container = MemoryStore.containerOrCrash(AgreedPrice.self)
-
     var body: some View {
         AgreedPriceEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: AgreedPrice.self)
     }
 }
 

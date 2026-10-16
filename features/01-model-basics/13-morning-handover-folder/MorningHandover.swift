@@ -17,19 +17,9 @@ enum MorningFolder {
 }
 
 struct MorningHandoverScreen: View {
-    private let container: ModelContainer
-
-    init() {
-        do {
-            container = try MemoryStore.make(MorningFolder.types)
-        } catch {
-            fatalError("In-memory store failed: \(error)")
-        }
-    }
-
     var body: some View {
         MorningHandoverEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: MorningFolder.types)
     }
 }
 

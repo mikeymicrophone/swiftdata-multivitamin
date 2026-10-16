@@ -15,6 +15,6 @@ On 14 May two slips hang on cook QS-22: clear, and a long rose. Hossein voids th
 
 **Try it**
 
-Open Qamsar cook slips. Hang the slips, void the cook, and read both counts.
+Open Qamsar cook slips. Hang the slips, then void the cook. The save runs in `do`/`catch`; a refused save rolls the context back. Both counts come from `fetchCount` on a new context.
 
 `swift test` locks the empty book in `voidingTheCookDeletesTheSlips`.

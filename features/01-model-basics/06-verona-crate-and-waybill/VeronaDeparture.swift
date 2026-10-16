@@ -34,11 +34,9 @@ final class PlateWaybill {
 }
 
 struct VeronaDepartureScreen: View {
-    private let container = MemoryStore.containerOrCrash(PlateCrateLabel.self, PlateWaybill.self)
-
     var body: some View {
         VeronaDepartureEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: PlateCrateLabel.self, PlateWaybill.self)
     }
 }
 

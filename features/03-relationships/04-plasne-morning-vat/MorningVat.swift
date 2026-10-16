@@ -32,11 +32,9 @@ final class MorningVat {
 }
 
 struct MorningVatScreen: View {
-    private let container = MemoryStore.containerOrCrash(VatWheel.self, MorningVat.self)
-
     var body: some View {
         MorningVatEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: VatWheel.self, MorningVat.self)
     }
 }
 

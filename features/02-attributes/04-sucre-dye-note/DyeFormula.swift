@@ -23,11 +23,9 @@ final class DyeFormula {
 }
 
 struct DyeFormulaScreen: View {
-    private let container = MemoryStore.containerOrCrash(DyeFormula.self)
-
     var body: some View {
         DyeFormulaEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: DyeFormula.self)
     }
 }
 

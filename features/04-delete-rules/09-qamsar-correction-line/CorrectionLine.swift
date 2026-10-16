@@ -43,11 +43,9 @@ final class LineCook {
 }
 
 struct CorrectionLineScreen: View {
-    private let container = MemoryStore.containerOrCrash(LineCook.self, TasteLine.self, CorrectionNote.self)
-
     var body: some View {
         CorrectionLineEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: LineCook.self, TasteLine.self, CorrectionNote.self)
     }
 }
 
@@ -81,7 +79,6 @@ private struct CorrectionLineEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func fileNotes() {
@@ -107,9 +104,9 @@ private struct CorrectionLineEditor: View {
         modelContext.delete(cook)
         try? modelContext.save()
         let filed = ModelContext(modelContext.container)
-        cookCount = ((try? filed.fetch(FetchDescriptor<LineCook>())) ?? []).count
-        lineCount = ((try? filed.fetch(FetchDescriptor<TasteLine>())) ?? []).count
-        noteCount = ((try? filed.fetch(FetchDescriptor<CorrectionNote>())) ?? []).count
+        cookCount = (try? filed.fetchCount(FetchDescriptor<LineCook>())) ?? 0
+        lineCount = (try? filed.fetchCount(FetchDescriptor<TasteLine>())) ?? 0
+        noteCount = (try? filed.fetchCount(FetchDescriptor<CorrectionNote>())) ?? 0
     }
 }
 

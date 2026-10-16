@@ -1,0 +1,29 @@
+# Builds the package and runs `swift test` on macOS (SwiftData needs Apple's SDK).
+# macOS runner minutes cost about 10x Linux minutes, so this only runs on
+# pull requests and on pushes to main.
+name: test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pick the newest Xcode installed on the runner image.
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      # Print versions, which helps when reading a failed log.
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Run tests
+        run: swift test

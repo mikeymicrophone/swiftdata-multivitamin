@@ -33,11 +33,9 @@ final class DistillLot {
 }
 
 struct FilledJarScreen: View {
-    private let container = MemoryStore.containerOrCrash(DistillLot.self, FilledJar.self)
-
     var body: some View {
         FilledJarEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: DistillLot.self, FilledJar.self)
     }
 }
 
@@ -70,7 +68,6 @@ private struct FilledJarEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func fillJar() {

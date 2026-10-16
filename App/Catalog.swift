@@ -569,7 +569,7 @@ enum Catalog {
             id: "13-yazd-morning-folder",
             title: "Yazd morning folder",
             teaches: [
-                "One save deletes four source cards, each under its own rule.",
+                "One save on a @ModelActor deletes four source cards, each under its own rule.",
                 "A new context shows the slips gone, the jar kept, the charged cook kept, and the chalk mark kept."
             ]
         )
@@ -612,7 +612,7 @@ enum Catalog {
             id: "05-lattice-scratch",
             title: "Lattice scratch",
             teaches: [
-                "A transient property can hold a struct that is not a column.",
+                "A transient property can hold an enum with associated values that is not a column.",
                 "A new context reads the default scratch. The bowl name is filed."
             ]
         ),
@@ -669,7 +669,7 @@ enum Catalog {
             title: "Trial hour",
             teaches: [
                 "A transient date uses its default on a new context.",
-                "The stem wood is filed."
+                "The stem wood is filed. A computed property built on the transient resets with it."
             ]
         ),
         CatalogScenario(

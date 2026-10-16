@@ -32,11 +32,9 @@ final class AgingCave {
 }
 
 struct YoungCaveScreen: View {
-    private let container = MemoryStore.containerOrCrash(CaveWheel.self, AgingCave.self)
-
     var body: some View {
         YoungCaveEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CaveWheel.self, AgingCave.self)
     }
 }
 

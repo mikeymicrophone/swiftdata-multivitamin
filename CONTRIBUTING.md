@@ -115,3 +115,22 @@ README does. That list is the index, not shared scenario logic.
 
 `swift test` and `swift run SwiftDataMultivitamin` need the macOS SDK and
 Xcode. The package targets macOS 14.
+
+## Idioms checklist
+
+Examples teach SwiftData, but they should also show off Swift. Within one
+feature, sibling examples should not share a shape. Before opening a PR, check
+that the feature as a whole uses several of these:
+
+- [ ] `@Query` with a `#Predicate` and/or `SortDescriptor` (not only manual `fetch`)
+- [ ] `FetchDescriptor` with `fetchLimit`, `propertiesToFetch`, or a predicate
+- [ ] `@ModelActor` and `async`/`await` for background work
+- [ ] enums with associated values, matched with `switch` / `if case`
+- [ ] computed properties, `didSet`, property wrappers, or `@Transient` where they fit
+- [ ] `guard let` / `if let x` shorthand, `try?` vs `do/catch`, `Result`
+- [ ] `KeyPath`s, `map`/`filter`/`reduce`/`compactMap`, `lazy`
+- [ ] varied SwiftUI view shapes: `List`, `Form`, `Grid`, `Table`, `NavigationStack`, sheets, `@Bindable`
+- [ ] shared container and preview setup lives in the shared helpers, not copied into each example
+
+If every example in a feature opens with the same scaffold and reads the same
+way, rewrite some of them before adding more.

@@ -25,11 +25,9 @@ final class RagDampSlip {
 }
 
 struct RagDampSlipScreen: View {
-    private let container = MemoryStore.containerOrCrash(RagDampSlip.self)
-
     var body: some View {
         RagDampSlipEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: RagDampSlip.self)
     }
 }
 

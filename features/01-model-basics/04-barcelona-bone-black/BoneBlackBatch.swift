@@ -38,11 +38,9 @@ final class BoneBlackBatch {
 }
 
 struct BoneBlackBatchScreen: View {
-    private let container = MemoryStore.containerOrCrash(BoneBlackBatch.self)
-
     var body: some View {
         BoneBlackBatchEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: BoneBlackBatch.self)
     }
 }
 

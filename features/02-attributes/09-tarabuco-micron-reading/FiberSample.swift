@@ -66,16 +66,13 @@ final class FiberSample {
 }
 
 struct FiberSampleScreen: View {
-    private let container: ModelContainer
-
     init() {
         MicronReadingTransformer.register()
-        container = MemoryStore.containerOrCrash(FiberSample.self)
     }
 
     var body: some View {
         FiberSampleEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: FiberSample.self)
     }
 }
 

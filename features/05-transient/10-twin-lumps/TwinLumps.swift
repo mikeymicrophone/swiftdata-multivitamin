@@ -8,11 +8,9 @@ import SwiftData
 import SwiftUI
 
 struct TwinLumpScreen: View {
-    private let container = MemoryStore.containerOrCrash(SepetciLump.self)
-
     var body: some View {
         TwinLumpEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: SepetciLump.self)
     }
 }
 
@@ -39,7 +37,6 @@ private struct TwinLumpEditor: View {
                 TwinFields(liveLines: liveLines, filedLines: filedLines)
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func fileBoth() {

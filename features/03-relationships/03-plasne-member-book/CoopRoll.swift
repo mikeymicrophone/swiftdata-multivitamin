@@ -35,11 +35,9 @@ final class CoopRoll {
 }
 
 struct CoopRollScreen: View {
-    private let container = MemoryStore.containerOrCrash(CoopRoll.self, CoopHand.self)
-
     var body: some View {
         CoopRollEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CoopRoll.self, CoopHand.self)
     }
 }
 

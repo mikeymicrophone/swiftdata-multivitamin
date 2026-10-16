@@ -6,6 +6,7 @@ On 13 April Halime Öztürk tries the cherry tenon at 16:00. The unmarked hour o
 
 - The trial hour is not a column.
 - A new context reads 08:00. The wood is cherry.
+- `hoursAfterOpening` is a computed property in an extension. It reads 8 on this card and 0 on the filed card.
 
 **Files**
 
@@ -15,6 +16,6 @@ On 13 April Halime Öztürk tries the cherry tenon at 16:00. The unmarked hour o
 
 **Try it**
 
-Open Trial hour. Open the card, then file it. This card shows 16:00. The filed card shows cherry and 08:00.
+Open Trial hour. Pick the trial hour, open the card, then file it. This card shows 16:00. The filed card shows cherry and 08:00.
 
 `swift test` locks the opening hour in `trialHourComesBackAsTheOpening`.

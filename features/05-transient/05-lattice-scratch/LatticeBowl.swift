@@ -1,15 +1,31 @@
 // Feature: @Transient
 // Slot 05 — Lattice scratch
 // Teaches:
-// - A transient property can hold a struct that is not a column.
+// - A transient property can hold an enum with associated values that is not a column.
 // - A new context reads the default scratch. The bowl name is filed.
 
 import SwiftData
 import SwiftUI
 
-struct LatticeScratch {
-    var openings: Int
-    var note: String
+enum LatticeScratch: Equatable {
+    case blank
+    case marked(openings: Int, note: String)
+    case stopped(atOpening: Int, reason: String)
+
+    var openings: Int {
+        switch self {
+        case .blank: 0
+        case .marked(let openings, _): openings
+        case .stopped(let opening, _): opening
+        }
+    }
+
+    var note: String {
+        switch self {
+        case .blank: ""
+        case let .marked(_, note), let .stopped(_, note): note
+        }
+    }
 }
 
 @Model
@@ -17,9 +33,9 @@ final class LatticeBowl {
     var bowlName: String
     var carverName: String
     var carvedOn: Date
-    @Transient var scratch: LatticeScratch = LatticeScratch(openings: 0, note: "")
+    @Transient var scratch: LatticeScratch = .blank
 
-    init(bowlName: String, carverName: String, carvedOn: Date, scratch: LatticeScratch = LatticeScratch(openings: 0, note: "")) {
+    init(bowlName: String, carverName: String, carvedOn: Date, scratch: LatticeScratch = .blank) {
         self.bowlName = bowlName
         self.carverName = carverName
         self.carvedOn = carvedOn
@@ -28,102 +44,83 @@ final class LatticeBowl {
 }
 
 struct LatticeBowlScreen: View {
-    private let container = MemoryStore.containerOrCrash(LatticeBowl.self)
-
     var body: some View {
         LatticeBowlEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: LatticeBowl.self)
     }
 }
 
 private struct LatticeBowlEditor: View {
     @Environment(\.modelContext) private var modelContext
     @State private var bowl: LatticeBowl?
-    @State private var liveScratch = ""
-    @State private var filedName = ""
-    @State private var filedScratch = ""
-    @State private var columns = ""
+    @State private var filed: (bowlName: String, scratch: LatticeScratch)?
 
     var body: some View {
         ScenarioChrome(
             kicker: "Transient · 05",
             title: "Lattice scratch",
-            situation: "On 6 April Nesrin Kaya keeps a scratch for the lattice egg: 14 openings, stop before the grey. The scratch is a small struct, not a column.",
+            situation: "On 6 April Nesrin Kaya keeps a scratch for the lattice egg: 14 openings, stop before the grey. The scratch is an enum on the card, not a column.",
             teaches: [
-                "A transient property can hold a struct that is not a column.",
+                "A transient property can hold an enum with associated values that is not a column.",
                 "A new context reads the default scratch. The bowl name is filed."
             ]
         ) {
             if let bowl {
-                ScratchFields(
-                    bowl: bowl,
-                    liveScratch: liveScratch,
-                    filedName: filedName,
-                    filedScratch: filedScratch,
-                    columns: columns
-                )
-                if filedName.isEmpty {
-                    Button("File the bowl card") {
-                        file(bowl)
+                Section(bowl.bowlName) {
+                    LabeledContent("Carver", value: bowl.carverName)
+                    LabeledContent("Columns") {
+                        Text(StoredAttribute.propertyNames(on: "LatticeBowl", in: modelContext.container.schema), format: .list(type: .and))
                     }
+                    ScratchRow(title: "Scratch on this card", scratch: bowl.scratch)
+                }
+                if let filed {
+                    Section("Filed card") {
+                        LabeledContent("Bowl", value: filed.bowlName)
+                        ScratchRow(title: "Scratch", scratch: filed.scratch)
+                    }
+                } else {
+                    Button("File the bowl card") {
+                        try? modelContext.save()
+                        filed = (try? modelContext.freshFirst(LatticeBowl.self)).map { (bowlName: $0.bowlName, scratch: $0.scratch) }
+                    }
+                }
+                Section {
+                    Text("Cemil Arslan cuts the oxhide case.")
+                        .foregroundStyle(.secondary)
                 }
             } else {
                 Button("Open the scratch card") {
-                    open()
+                    let bowl = LatticeBowl(
+                        bowlName: "Lattice egg",
+                        carverName: "Nesrin Kaya",
+                        carvedOn: GregorianDay.date(year: 2026, month: 4, day: 6, timeZoneIdentifier: "Europe/Istanbul"),
+                        scratch: .marked(openings: 14, note: "Stop before the grey")
+                    )
+                    modelContext.insert(bowl)
+                    self.bowl = bowl
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
-    }
-
-    private func open() {
-        let bowl = LatticeBowl(
-            bowlName: "Lattice egg",
-            carverName: "Nesrin Kaya",
-            carvedOn: GregorianDay.date(year: 2026, month: 4, day: 6, timeZoneIdentifier: "Europe/Istanbul"),
-            scratch: LatticeScratch(openings: 14, note: "Stop before the grey")
-        )
-        modelContext.insert(bowl)
-        columns = StoredAttribute.propertyNames(on: "LatticeBowl", in: modelContext.container.schema).joined(separator: ", ")
-        self.bowl = bowl
-    }
-
-    private func file(_ bowl: LatticeBowl) {
-        try? modelContext.save()
-        liveScratch = scratchLine(bowl.scratch)
-        let filed = (try? ModelContext(modelContext.container).fetch(FetchDescriptor<LatticeBowl>()))?.first
-        filedName = filed?.bowlName ?? "Missing"
-        filedScratch = filed.map { scratchLine($0.scratch) } ?? "Missing"
-    }
-
-    private func scratchLine(_ scratch: LatticeScratch) -> String {
-        let note = scratch.note.isEmpty ? "empty note" : scratch.note
-        return "\(scratch.openings) openings, \(note)"
     }
 }
 
-private struct ScratchFields: View {
-    let bowl: LatticeBowl
-    let liveScratch: String
-    let filedName: String
-    let filedScratch: String
-    let columns: String
+private struct ScratchRow: View {
+    let title: String
+    let scratch: LatticeScratch
 
     var body: some View {
-        Section(bowl.bowlName) {
-            LabeledContent("Carver", value: bowl.carverName)
-            LabeledContent("Columns", value: columns)
-            LabeledContent("Scratch on this card", value: liveScratch.isEmpty ? "\(bowl.scratch.openings) openings, \(bowl.scratch.note)" : liveScratch)
-        }
-        if !filedName.isEmpty {
-            Section("Filed card") {
-                LabeledContent("Bowl", value: filedName)
-                LabeledContent("Scratch", value: filedScratch)
+        LabeledContent(title) {
+            switch scratch {
+            case .blank:
+                Text("Blank")
+                    .foregroundStyle(.secondary)
+            case .marked(let openings, let note) where note.isEmpty:
+                Text("\(openings) openings")
+            case let .marked(openings, note):
+                Text("\(openings) openings, \(note)")
+            case let .stopped(opening, reason):
+                Label("Stopped at \(opening): \(reason)", systemImage: "hand.raised")
             }
-        }
-        Section {
-            Text("Cemil Arslan cuts the oxhide case.")
-                .foregroundStyle(.secondary)
         }
     }
 }

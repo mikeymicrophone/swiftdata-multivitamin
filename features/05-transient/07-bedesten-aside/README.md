@@ -15,6 +15,6 @@ On 8 April Aylin Şahin files pipe EB-7 at 4000 lira in the Eskişehir bedesten.
 
 **Try it**
 
-Open Bedesten aside. Open the counter card, then write the aside. The context is unchanged. The filed price stays 4000 lira.
+Open Bedesten aside. Open the counter card, then type the aside into the field. Each keystroke reads `hasChanges`, and it stays No. Save and read the filed card: the price stays 4000 lira and the aside is empty.
 
 `swift test` locks the clean context in `asideDoesNotMarkTheContext`.

@@ -25,20 +25,16 @@ final class BedestenCard {
 }
 
 struct BedestenAsideScreen: View {
-    private let container = MemoryStore.containerOrCrash(BedestenCard.self)
-
     var body: some View {
         BedestenAsideEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: BedestenCard.self)
     }
 }
 
 private struct BedestenAsideEditor: View {
     @Environment(\.modelContext) private var modelContext
     @State private var card: BedestenCard?
-    @State private var changedLine = ""
-    @State private var filedPrice = ""
-    @State private var filedAside = ""
+    @State private var filed: (priceLira: Int, aside: String)?
 
     var body: some View {
         ScenarioChrome(
@@ -51,67 +47,63 @@ private struct BedestenAsideEditor: View {
             ]
         ) {
             if let card {
-                AsideFields(card: card, changedLine: changedLine, filedPrice: filedPrice, filedAside: filedAside)
-                if changedLine.isEmpty {
-                    Button("Write the aside") {
-                        writeAside(card)
+                AsideFields(card: card)
+                if let filed {
+                    Section("Filed card") {
+                        LabeledContent("Price", value: "\(filed.priceLira) lira")
+                        LabeledContent("Aside", value: filed.aside.isEmpty ? "Empty" : filed.aside)
+                    }
+                } else {
+                    Button("Save and read the filed card") {
+                        try? modelContext.save()
+                        filed = (try? modelContext.freshFirst(BedestenCard.self)).map { (priceLira: $0.priceLira, aside: $0.aside) }
                     }
                 }
             } else {
                 Button("Open the counter card") {
-                    open()
+                    let card = BedestenCard(
+                        pipeCode: "EB-7",
+                        sellerName: "Aylin Şahin",
+                        priceLira: 4000,
+                        openedOn: GregorianDay.date(year: 2026, month: 4, day: 8, timeZoneIdentifier: "Europe/Istanbul")
+                    )
+                    modelContext.insert(card)
+                    try? modelContext.save()
+                    self.card = card
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
-    }
-
-    private func open() {
-        let card = BedestenCard(
-            pipeCode: "EB-7",
-            sellerName: "Aylin Şahin",
-            priceLira: 4000,
-            openedOn: GregorianDay.date(year: 2026, month: 4, day: 8, timeZoneIdentifier: "Europe/Istanbul")
-        )
-        modelContext.insert(card)
-        try? modelContext.save()
-        self.card = card
-    }
-
-    private func writeAside(_ card: BedestenCard) {
-        card.aside = "Emre will collect at dusk"
-        changedLine = modelContext.hasChanges ? "Yes" : "No"
-        try? modelContext.save()
-        let filed = (try? ModelContext(modelContext.container).fetch(FetchDescriptor<BedestenCard>()))?.first
-        filedPrice = filed.map { "\($0.priceLira) lira" } ?? "Missing"
-        filedAside = filed?.aside.isEmpty == false ? (filed?.aside ?? "Missing") : "Empty"
     }
 }
 
 private struct AsideFields: View {
+    @Environment(\.modelContext) private var modelContext
     let card: BedestenCard
-    let changedLine: String
-    let filedPrice: String
-    let filedAside: String
+    @State private var contextChanged: Bool?
 
     var body: some View {
         Section(card.pipeCode) {
             LabeledContent("Seller", value: card.sellerName)
             LabeledContent("Price", value: "\(card.priceLira) lira")
-            if !changedLine.isEmpty {
-                LabeledContent("Aside on this card", value: card.aside)
-                LabeledContent("Context changed", value: changedLine)
-            }
-        }
-        if !filedPrice.isEmpty {
-            Section("Filed card") {
-                LabeledContent("Price", value: filedPrice)
-                LabeledContent("Aside", value: filedAside)
+            TextField("Aside", text: aside, prompt: Text("Emre will collect at dusk"))
+            if let contextChanged {
+                LabeledContent("Context changed", value: contextChanged ? "Yes" : "No")
             }
         }
         Section {
             Text("Aylin changes the price on the card.")
                 .foregroundStyle(.secondary)
         }
+    }
+
+    // A hand-built binding, so each keystroke also reads hasChanges right after the write.
+    private var aside: Binding<String> {
+        Binding(
+            get: { card.aside },
+            set: { newAside in
+                card.aside = newAside
+                contextChanged = modelContext.hasChanges
+            }
+        )
     }
 }

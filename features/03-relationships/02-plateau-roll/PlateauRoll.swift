@@ -8,11 +8,9 @@ import SwiftData
 import SwiftUI
 
 struct PlateauRollScreen: View {
-    private let container = MemoryStore.containerOrCrash(MilkNote.self, Fruitiere.self)
-
     var body: some View {
         PlateauRollEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: MilkNote.self, Fruitiere.self)
     }
 }
 

@@ -31,11 +31,9 @@ final class ShearingLicense {
 }
 
 struct ShearingLicenseScreen: View {
-    private let container = MemoryStore.containerOrCrash(ShearingLicense.self)
-
     var body: some View {
         ShearingLicenseEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: ShearingLicense.self)
     }
 }
 

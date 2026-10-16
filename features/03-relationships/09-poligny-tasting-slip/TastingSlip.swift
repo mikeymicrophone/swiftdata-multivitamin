@@ -43,11 +43,9 @@ final class TastingSlip {
 }
 
 struct TastingSlipScreen: View {
-    private let container = MemoryStore.containerOrCrash(TastingSlip.self, SlipTaster.self, SlipWheel.self)
-
     var body: some View {
         TastingSlipEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: TastingSlip.self, SlipTaster.self, SlipWheel.self)
     }
 }
 

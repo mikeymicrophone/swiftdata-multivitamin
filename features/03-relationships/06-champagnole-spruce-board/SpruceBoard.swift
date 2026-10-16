@@ -31,11 +31,9 @@ final class SpruceBoard {
 }
 
 struct SpruceBoardScreen: View {
-    private let container = MemoryStore.containerOrCrash(SpruceBoard.self, BoardWheel.self)
-
     var body: some View {
         SpruceBoardEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: SpruceBoard.self, BoardWheel.self)
     }
 }
 

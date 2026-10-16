@@ -45,11 +45,9 @@ final class Fruitiere {
 }
 
 struct MilkNoteScreen: View {
-    private let container = MemoryStore.containerOrCrash(MilkNote.self, Fruitiere.self)
-
     var body: some View {
         MilkNoteEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: MilkNote.self, Fruitiere.self)
     }
 }
 

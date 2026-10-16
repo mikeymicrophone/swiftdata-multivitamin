@@ -25,11 +25,9 @@ final class SepetciLump {
 }
 
 struct SepetciLumpScreen: View {
-    private let container = MemoryStore.containerOrCrash(SepetciLump.self)
-
     var body: some View {
         SepetciLumpEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: SepetciLump.self)
     }
 }
 
@@ -61,7 +59,6 @@ private struct SepetciLumpEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func open() {

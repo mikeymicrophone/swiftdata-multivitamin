@@ -16,28 +16,53 @@ enum PipeFolder {
     ]
 }
 
+/// What every card on the counter can say, whatever its columns are.
+protocol CounterCard: PersistentModel {
+    var deskFact: String { get }
+    var asideLine: String { get }
+}
+
+extension CounterCard {
+    static var entityName: String { String(describing: Self.self) }
+}
+
+extension SepetciLump: CounterCard {
+    var deskFact: String { lumpCode }
+    var asideLine: String { seamNote.isEmpty ? "empty note" : seamNote }
+}
+
+extension CarvedBowl: CounterCard {
+    var deskFact: String { bowlName }
+    var asideLine: String { "\(openings) openings" }
+}
+
+extension WaxCook: CounterCard {
+    var deskFact: String { lotCode }
+    var asideLine: String { whisper ?? "Unspoken" }
+}
+
+extension StemFit: CounterCard {
+    var deskFact: String { wood }
+    var asideLine: String { nick }
+}
+
+private struct CardReading: Identifiable {
+    let id: String
+    let columns: [String]
+    let onCounter: String
+    let readAgain: String
+}
+
 struct PipeHandoverScreen: View {
-    private let container: ModelContainer
-
-    init() {
-        do {
-            container = try MemoryStore.make(PipeFolder.types)
-        } catch {
-            fatalError("In-memory store failed: \(error)")
-        }
-    }
-
     var body: some View {
         PipeHandoverEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: PipeFolder.types)
     }
 }
 
 private struct PipeHandoverEditor: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var columns = ""
-    @State private var liveLines = ""
-    @State private var filedLines = ""
+    @State private var readings: [CardReading] = []
 
     var body: some View {
         ScenarioChrome(
@@ -49,92 +74,65 @@ private struct PipeHandoverEditor: View {
                 "A new context files the four desk facts and reads each default aside."
             ]
         ) {
-            if columns.isEmpty {
-                Button("Lay out the four cards") {
-                    layOut()
-                }
+            if readings.isEmpty {
+                Button("Lay out the four cards", action: layOut)
             } else {
-                FolderFields(columns: columns, liveLines: liveLines, filedLines: filedLines)
+                ForEach(readings) { reading in
+                    Section(reading.id) {
+                        LabeledContent("Columns", value: reading.columns.joined(separator: ", "))
+                        LabeledContent("On the counter", value: reading.onCounter)
+                        LabeledContent("Read again", value: reading.readAgain)
+                    }
+                }
+                Section {
+                    Text("Emre Yılmaz collects pipe EB-7 that evening.")
+                        .foregroundStyle(.secondary)
+                }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func layOut() {
-        let lump = SepetciLump(
-            lumpCode: "EB-7",
-            cutterName: "Kemal Aydın",
-            grams: 180,
-            cutOn: GregorianDay.date(year: 2026, month: 4, day: 2, timeZoneIdentifier: "Europe/Istanbul"),
-            seamNote: "Avoid the grey seam"
-        )
-        let bowl = CarvedBowl(
-            bowlName: "Lattice egg",
-            carverName: "Nesrin Kaya",
-            carvedOn: GregorianDay.date(year: 2026, month: 4, day: 3, timeZoneIdentifier: "Europe/Istanbul"),
-            openings: 14
-        )
-        let cook = WaxCook(
-            lotCode: "WX-7",
-            waxerName: "Yusuf Demir",
-            cookedOn: GregorianDay.date(year: 2026, month: 4, day: 4, timeZoneIdentifier: "Europe/Istanbul"),
-            whisper: "Cooler than yesterday"
-        )
-        let stem = StemFit(
-            wood: "Cherry",
-            fitterName: "Halime Öztürk",
-            fittedOn: GregorianDay.date(year: 2026, month: 4, day: 5, timeZoneIdentifier: "Europe/Istanbul"),
-            nick: "Tight on the tenon"
-        )
-        modelContext.insert(lump)
-        modelContext.insert(bowl)
-        modelContext.insert(cook)
-        modelContext.insert(stem)
+        let cards: [any CounterCard] = [
+            SepetciLump(
+                lumpCode: "EB-7",
+                cutterName: "Kemal Aydın",
+                grams: 180,
+                cutOn: GregorianDay.date(year: 2026, month: 4, day: 2, timeZoneIdentifier: "Europe/Istanbul"),
+                seamNote: "Avoid the grey seam"
+            ),
+            CarvedBowl(
+                bowlName: "Lattice egg",
+                carverName: "Nesrin Kaya",
+                carvedOn: GregorianDay.date(year: 2026, month: 4, day: 3, timeZoneIdentifier: "Europe/Istanbul"),
+                openings: 14
+            ),
+            WaxCook(
+                lotCode: "WX-7",
+                waxerName: "Yusuf Demir",
+                cookedOn: GregorianDay.date(year: 2026, month: 4, day: 4, timeZoneIdentifier: "Europe/Istanbul"),
+                whisper: "Cooler than yesterday"
+            ),
+            StemFit(
+                wood: "Cherry",
+                fitterName: "Halime Öztürk",
+                fittedOn: GregorianDay.date(year: 2026, month: 4, day: 5, timeZoneIdentifier: "Europe/Istanbul"),
+                nick: "Tight on the tenon"
+            )
+        ]
+        cards.forEach { modelContext.insert($0) }
         try? modelContext.save()
-        let schema = modelContext.container.schema
-        columns = ["SepetciLump", "CarvedBowl", "WaxCook", "StemFit"]
-            .map { name in
-                "\(name): \(StoredAttribute.propertyNames(on: name, in: schema).joined(separator: ", "))"
-            }
-            .joined(separator: "\n")
-        liveLines = [
-            "\(lump.lumpCode), \(lump.seamNote)",
-            "\(bowl.bowlName), \(bowl.openings) openings",
-            "\(cook.lotCode), \(cook.whisper ?? "Unspoken")",
-            "\(stem.wood), \(stem.nick)"
-        ].joined(separator: "\n")
-        let filed = ModelContext(modelContext.container)
-        let filedLump = (try? filed.fetch(FetchDescriptor<SepetciLump>()))?.first
-        let filedBowl = (try? filed.fetch(FetchDescriptor<CarvedBowl>()))?.first
-        let filedCook = (try? filed.fetch(FetchDescriptor<WaxCook>()))?.first
-        let filedStem = (try? filed.fetch(FetchDescriptor<StemFit>()))?.first
-        filedLines = [
-            "\(filedLump?.lumpCode ?? "Missing"), \(filedLump?.seamNote.isEmpty == false ? filedLump?.seamNote ?? "" : "empty note")",
-            "\(filedBowl?.bowlName ?? "Missing"), \(filedBowl?.openings ?? -1) openings",
-            "\(filedCook?.lotCode ?? "Missing"), \(filedCook?.whisper ?? "Unspoken")",
-            "\(filedStem?.wood ?? "Missing"), \(filedStem?.nick ?? "Missing")"
-        ].joined(separator: "\n")
+        readings = cards.map { reading(of: $0) }
     }
-}
 
-private struct FolderFields: View {
-    let columns: String
-    let liveLines: String
-    let filedLines: String
-
-    var body: some View {
-        Section("Columns") {
-            Text(columns)
-        }
-        Section("On the counter") {
-            Text(liveLines)
-        }
-        Section("Read again") {
-            Text(filedLines)
-        }
-        Section {
-            Text("Emre Yılmaz collects pipe EB-7 that evening.")
-                .foregroundStyle(.secondary)
-        }
+    // Each `any CounterCard` is opened into a concrete Card here, so the fetch is typed.
+    private func reading<Card: CounterCard>(of card: Card) -> CardReading {
+        let filed = try? modelContext.freshFirst(Card.self)
+        return CardReading(
+            id: Card.entityName,
+            columns: StoredAttribute.propertyNames(on: Card.entityName, in: modelContext.container.schema),
+            onCounter: "\(card.deskFact), \(card.asideLine)",
+            readAgain: filed.map { "\($0.deskFact), \($0.asideLine)" } ?? "Missing"
+        )
     }
 }
