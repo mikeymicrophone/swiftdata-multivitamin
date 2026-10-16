@@ -231,14 +231,18 @@ struct ModelBasicsTests {
         #expect(names.count == 4)
     }
 
-    @Test func catalogBottlesTheFirstFiveFeatures() {
+    @Test func catalogBottlesTheFirstSixFeatures() {
         #expect(Catalog.features.count == 21)
         #expect(Catalog.features[0].scenarios.count == 13)
         #expect(Catalog.features[1].scenarios.count == 13)
         #expect(Catalog.features[2].scenarios.count == 13)
         #expect(Catalog.features[3].scenarios.count == 13)
         #expect(Catalog.features[4].scenarios.count == 13)
-        #expect(Catalog.features.dropFirst(5).allSatisfy { $0.scenarios.isEmpty })
+        #expect(Catalog.features[5].scenarios.count == 13)
+        #expect(Catalog.features.dropFirst(6).allSatisfy { $0.scenarios.isEmpty })
+        let scenarios = Catalog.features.flatMap(\.scenarios)
+        #expect(scenarios.count == 78)
+        #expect(Set(scenarios.map(\.id)).count == scenarios.count)
     }
 
     private func storedPropertyNames(_ type: any PersistentModel.Type) throws -> Set<String> {
