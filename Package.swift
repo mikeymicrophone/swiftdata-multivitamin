@@ -86,7 +86,21 @@ let package = Package(
                 "features/05-transient/10-twin-lumps/README.md",
                 "features/05-transient/11-two-benches/README.md",
                 "features/05-transient/12-trial-hour/README.md",
-                "features/05-transient/13-bedesten-morning/README.md"
+                "features/05-transient/13-bedesten-morning/README.md",
+                "features/06-codable-and-enums/README.md",
+                "features/06-codable-and-enums/01-miahuatlan-agave/README.md",
+                "features/06-codable-and-enums/02-minas-roast/README.md",
+                "features/06-codable-and-enums/03-minas-maestra/README.md",
+                "features/06-codable-and-enums/04-minas-tina/README.md",
+                "features/06-codable-and-enums/05-minas-clay-still/README.md",
+                "features/06-codable-and-enums/06-minas-heart-cut/README.md",
+                "features/06-codable-and-enums/07-minas-resting-jars/README.md",
+                "features/06-codable-and-enums/08-oaxaca-aroma-flight/README.md",
+                "features/06-codable-and-enums/09-oaxaca-label-proof/README.md",
+                "features/06-codable-and-enums/10-mexico-city-allocation/README.md",
+                "features/06-codable-and-enums/11-oaxaca-flight-revision/README.md",
+                "features/06-codable-and-enums/12-paris-customs-envelope/README.md",
+                "features/06-codable-and-enums/13-madrid-morning-folder/README.md"
             ],
             sources: [
                 "App",
@@ -94,7 +108,8 @@ let package = Package(
                 "features/02-attributes",
                 "features/03-relationships",
                 "features/04-delete-rules",
-                "features/05-transient"
+                "features/05-transient",
+                "features/06-codable-and-enums"
             ]
         ),
         .testTarget(

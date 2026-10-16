@@ -201,6 +201,32 @@ struct CatalogView: View {
             TrialFitScreen()
         case "13-bedesten-morning":
             PipeHandoverScreen()
+        case "01-miahuatlan-agave":
+            AgaveHarvestScreen()
+        case "02-minas-roast":
+            RoastCardScreen()
+        case "03-minas-maestra":
+            MaestraCardScreen()
+        case "04-minas-tina":
+            FermentCardScreen()
+        case "05-minas-clay-still":
+            ClayRunScreen()
+        case "06-minas-heart-cut":
+            HeartCutScreen()
+        case "07-minas-resting-jars":
+            RestingJarScreen()
+        case "08-oaxaca-aroma-flight":
+            AromaFlightScreen()
+        case "09-oaxaca-label-proof":
+            LabelProofScreen()
+        case "10-mexico-city-allocation":
+            DistributorAllocationScreen()
+        case "11-oaxaca-flight-revision":
+            FlightRecipeScreen()
+        case "12-paris-customs-envelope":
+            CustomsEnvelopeScreen()
+        case "13-madrid-morning-folder":
+            MezcalHandoverScreen()
         default:
             Text("That scenario is not bottled.")
                 .foregroundStyle(.secondary)

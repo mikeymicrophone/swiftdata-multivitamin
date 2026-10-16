@@ -49,7 +49,7 @@ enum Catalog {
             id: "06-codable-and-enums",
             title: "Codable and enums",
             summary: "Stored enums and Codable values.",
-            scenarios: []
+            scenarios: codableAndEnums
         ),
         CatalogFeature(
             id: "07-model-container",
@@ -678,6 +678,113 @@ enum Catalog {
             teaches: [
                 "One schema holds the four cards, and each aside is omitted.",
                 "A new context files the four desk facts and reads each default aside."
+            ]
+        )
+    ]
+
+    private static let codableAndEnums: [CatalogScenario] = [
+        CatalogScenario(
+            id: "01-miahuatlan-agave",
+            title: "Miahuatlán agave",
+            teaches: [
+                "A String-backed Codable enum can be a stored property.",
+                "CaseIterable supplies a Picker without storing its display labels separately."
+            ]
+        ),
+        CatalogScenario(
+            id: "02-minas-roast",
+            title: "Minas roast",
+            teaches: [
+                "A Codable struct is a value on the roast card, not a related model.",
+                "Copying, editing, and assigning the value files the revised roast."
+            ]
+        ),
+        CatalogScenario(
+            id: "03-minas-maestra",
+            title: "Minas maestra",
+            teaches: [
+                "Codable values can nest other Codable structs.",
+                "A sorted @Query reads the producer snapshot stored on each card."
+            ]
+        ),
+        CatalogScenario(
+            id: "04-minas-tina",
+            title: "Minas tina",
+            teaches: [
+                "An optional Codable reading distinguishes no sample from a measured zero.",
+                "Assigning a reading and clearing it are both saved states."
+            ]
+        ),
+        CatalogScenario(
+            id: "05-minas-clay-still",
+            title: "Minas clay still",
+            teaches: [
+                "An Int-backed Codable enum stores the distillation pass.",
+                "Query the primitive lot code, then match the enum in Swift."
+            ]
+        ),
+        CatalogScenario(
+            id: "06-minas-heart-cut",
+            title: "Minas heart cut",
+            teaches: [
+                "An associated-value Codable enum can be explicitly encoded into a Data attribute.",
+                "Decoding throws on damaged bytes; switch and if case recover the payload."
+            ]
+        ),
+        CatalogScenario(
+            id: "07-minas-resting-jars",
+            title: "Minas resting jars",
+            teaches: [
+                "An array of Codable structs is a value collection on one model.",
+                "Appending through a copied array preserves the ordered inspection history."
+            ]
+        ),
+        CatalogScenario(
+            id: "08-oaxaca-aroma-flight",
+            title: "Oaxaca aroma flight",
+            teaches: [
+                "A collection of Codable enum values keeps its tasting order.",
+                "A sheet edits the collection by assigning a replacement array."
+            ]
+        ),
+        CatalogScenario(
+            id: "09-oaxaca-label-proof",
+            title: "Oaxaca label proof",
+            teaches: [
+                "CodingKeys translates an external label document before insertion.",
+                "A separate document type keeps wire keys out of the stored Codable value."
+            ]
+        ),
+        CatalogScenario(
+            id: "10-mexico-city-allocation",
+            title: "Mexico City allocation",
+            teaches: [
+                "A raw String column supports a predicate while a computed enum guides the desk.",
+                "Unknown distributor codes stay intact instead of silently becoming a known case."
+            ]
+        ),
+        CatalogScenario(
+            id: "11-oaxaca-flight-revision",
+            title: "Oaxaca flight revision",
+            teaches: [
+                "Copying a Codable recipe into another model creates an independent value snapshot.",
+                "A KeyPath reduction totals the nested pours after a whole-value replacement."
+            ]
+        ),
+        CatalogScenario(
+            id: "12-paris-customs-envelope",
+            title: "Paris customs envelope",
+            teaches: [
+                "Explicit JSON date strategies define the customs document's wire format.",
+                "A ModelActor reads stored bytes and returns a Sendable Codable value, not a model."
+            ]
+        ),
+        CatalogScenario(
+            id: "13-madrid-morning-folder",
+            title: "Madrid morning folder",
+            teaches: [
+                "One schema can hold enum, struct, collection, and raw-code cards together.",
+                "A Codable handover snapshot is assembled from fresh reads without model relationships."
             ]
         )
     ]
