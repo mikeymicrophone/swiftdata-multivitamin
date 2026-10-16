@@ -752,7 +752,7 @@ enum Catalog {
             title: "Oaxaca label proof",
             teaches: [
                 "CodingKeys translates an external label document before insertion.",
-                "The decoded Codable value is stored directly; its wire keys are a JSON concern."
+                "A separate document type keeps wire keys out of the stored Codable value."
             ]
         ),
         CatalogScenario(

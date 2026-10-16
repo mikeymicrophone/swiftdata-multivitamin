@@ -2,7 +2,7 @@
 // Slot 09 — Oaxaca label proof
 // Teaches:
 // - CodingKeys translates an external label document before insertion.
-// - The decoded Codable value is stored directly; its wire keys are a JSON concern.
+// - A separate document type keeps wire keys out of the stored Codable value.
 
 import Foundation
 import SwiftData
@@ -12,11 +12,27 @@ struct BottleLabel: Codable, Equatable {
     var lotCode: String
     var alcoholPercent: Double
     var bottleMillilitres: Int
+}
+
+private struct PrinterLabelDocument: Codable {
+    var lotCode: String
+    var alcoholPercent: Double
+    var bottleMillilitres: Int
 
     enum CodingKeys: String, CodingKey {
         case lotCode = "lote"
         case alcoholPercent = "alc_vol"
         case bottleMillilitres = "contenido_ml"
+    }
+
+    init(label: BottleLabel) {
+        lotCode = label.lotCode
+        alcoholPercent = label.alcoholPercent
+        bottleMillilitres = label.bottleMillilitres
+    }
+
+    var label: BottleLabel {
+        BottleLabel(lotCode: lotCode, alcoholPercent: alcoholPercent, bottleMillilitres: bottleMillilitres)
     }
 }
 
@@ -31,8 +47,12 @@ final class LabelProof {
     }
 
     static func importProof(_ document: Data, printerName: String) throws -> LabelProof {
-        let label = try JSONDecoder().decode(BottleLabel.self, from: document)
-        return LabelProof(printerName: printerName, label: label)
+        let proof = try JSONDecoder().decode(PrinterLabelDocument.self, from: document)
+        return LabelProof(printerName: printerName, label: proof.label)
+    }
+
+    func exportDocument() throws -> Data {
+        try JSONEncoder().encode(PrinterLabelDocument(label: label))
     }
 }
 
@@ -68,7 +88,7 @@ private struct LabelProofDesk: View {
                 } catch { receipt = error.localizedDescription }
             }
             Text(receipt)
-            Text("Teaches: CodingKeys at import; a decoded Codable value stored directly on the proof.")
+            Text("Teaches: CodingKeys on the printer document; a separate Codable value stored directly on the proof.")
                 .font(.callout).foregroundStyle(.secondary)
         }
         .padding()

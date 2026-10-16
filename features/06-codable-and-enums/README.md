@@ -42,7 +42,7 @@ On 2 March 2026 Inés Santiago cuts espadín for Palenque del Guayabo. On 3 Marc
 | 12 | ISO 8601 strategies, @ModelActor, async/await, Sendable DTO |
 | 13 | Shared schema registry, fresh reads, Codable manifest, independent snapshot |
 
-Direct enum and struct properties are the lesson in the opening cards. The heart-cut decision and customs envelope deliberately store JSON bytes in `Data` properties: their types provide explicit throwing encode/decode operations. Those examples teach a wire boundary, not an assumption about how SwiftData internally encodes every Codable type. `CodingKeys` on the label belongs to its JSON import/export contract.
+Direct enum and struct properties are the lesson in the opening cards. The heart-cut decision and customs envelope deliberately store JSON bytes in `Data` properties: their types provide explicit throwing encode/decode operations. Those examples teach a wire boundary, not an assumption about how SwiftData internally encodes every Codable type. The label proof keeps `CodingKeys` on a separate printer document for JSON import/export; its directly stored value uses synthesized keys matching its Swift properties.
 
 Queries filter primitive columns and then match enums in Swift. The distributor card shows an alternative for a queryable status: retain the raw code in the store and expose a computed optional enum. An unfamiliar code remains available for review. These screens target the package’s macOS 14 API baseline and do not use newer attribute options.
 

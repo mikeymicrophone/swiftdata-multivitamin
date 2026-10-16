@@ -144,9 +144,18 @@ struct CodableAndEnumTests {
         let filed = try #require(try context.freshFirst(LabelProof.self))
         #expect(filed.label == BottleLabel(lotCode: "SC-26", alcoholPercent: 47, bottleMillilitres: 700))
 
-        let exported = try JSONEncoder().encode(filed.label)
+        let exported = try filed.exportDocument()
         let keys = try #require(try JSONSerialization.jsonObject(with: exported) as? [String: Any])
         #expect(Set(keys.keys) == Set(["lote", "alc_vol", "contenido_ml"]))
+        let reimported = try LabelProof.importProof(exported, printerName: filed.printerName)
+        #expect(reimported.label == filed.label)
+
+        proof.label = BottleLabel(lotCode: "SC-26 revised", alcoholPercent: 48, bottleMillilitres: 750)
+        try context.save()
+        let revised = try #require(try context.freshFirst(LabelProof.self))
+        #expect(revised.label == proof.label)
+        let revisedImport = try LabelProof.importProof(revised.exportDocument(), printerName: revised.printerName)
+        #expect(revisedImport.label == proof.label)
         #expect(throws: DecodingError.self) {
             try LabelProof.importProof(Data(#"{"lote":"SC-26"}"#.utf8), printerName: "Imprenta del Nopal")
         }

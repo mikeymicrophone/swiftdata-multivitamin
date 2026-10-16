@@ -5,7 +5,7 @@ On 21 March Imprenta del Nopal in Oaxaca de Juárez sends Elena the SC-26 label 
 **What it teaches**
 
 - CodingKeys translates an external label document before insertion.
-- The decoded Codable value is stored directly; its wire keys are a JSON concern.
+- A separate document type keeps wire keys out of the stored Codable value.
 
 **Files**
 
@@ -15,6 +15,6 @@ On 21 March Imprenta del Nopal in Oaxaca de Juárez sends Elena the SC-26 label 
 
 **Try it**
 
-Open Oaxaca label proof. Read the Nopal proof. The table shows the decoded lot, strength, and volume; the receipt reads the lot from a saved proof. CodingKeys applies when JSON is encoded or decoded, not as a SwiftData column-renaming instruction.
+Open Oaxaca label proof. Read the Nopal proof. The table shows the decoded lot, strength, and volume; the receipt reads the lot from a saved proof. `PrinterLabelDocument` uses CodingKeys for Spanish JSON import/export, while the directly stored `BottleLabel` uses synthesized keys matching its Swift properties. Keeping these types separate avoids missing mandatory fields when SwiftData saves and reloads the composite value.
 
 `swift test` locks the lesson in `labelKeysTranslateAtTheJSONBoundary`.
