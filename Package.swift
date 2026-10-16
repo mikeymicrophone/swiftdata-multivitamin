@@ -72,14 +72,29 @@ let package = Package(
                 "features/04-delete-rules/10-yazd-wedding-tray/README.md",
                 "features/04-delete-rules/11-yazd-sister-jar/README.md",
                 "features/04-delete-rules/12-qamsar-blank-card/README.md",
-                "features/04-delete-rules/13-yazd-morning-folder/README.md"
+                "features/04-delete-rules/13-yazd-morning-folder/README.md",
+                "features/05-transient/README.md",
+                "features/05-transient/01-sepetci-lump/README.md",
+                "features/05-transient/02-odunpazari-bowl/README.md",
+                "features/05-transient/03-wax-whisper/README.md",
+                "features/05-transient/04-stem-nick/README.md",
+                "features/05-transient/05-lattice-scratch/README.md",
+                "features/05-transient/06-hide-case/README.md",
+                "features/05-transient/07-bedesten-aside/README.md",
+                "features/05-transient/08-bedesten-price/README.md",
+                "features/05-transient/09-counter-reading/README.md",
+                "features/05-transient/10-twin-lumps/README.md",
+                "features/05-transient/11-two-benches/README.md",
+                "features/05-transient/12-trial-hour/README.md",
+                "features/05-transient/13-bedesten-morning/README.md"
             ],
             sources: [
                 "App",
                 "features/01-model-basics",
                 "features/02-attributes",
                 "features/03-relationships",
-                "features/04-delete-rules"
+                "features/04-delete-rules",
+                "features/05-transient"
             ]
         ),
         .testTarget(

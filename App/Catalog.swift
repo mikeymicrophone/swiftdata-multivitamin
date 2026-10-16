@@ -43,7 +43,7 @@ enum Catalog {
             id: "05-transient",
             title: "@Transient",
             summary: "Properties that live on the class and are not columns.",
-            scenarios: []
+            scenarios: transient
         ),
         CatalogFeature(
             id: "06-codable-and-enums",
@@ -571,6 +571,113 @@ enum Catalog {
             teaches: [
                 "One save deletes four source cards, each under its own rule.",
                 "A new context shows the slips gone, the jar kept, the charged cook kept, and the chalk mark kept."
+            ]
+        )
+    ]
+
+    private static let transient: [CatalogScenario] = [
+        CatalogScenario(
+            id: "01-sepetci-lump",
+            title: "Sepetçi lump card",
+            teaches: [
+                "The seam note is absent from the schema.",
+                "The lump code is a column."
+            ]
+        ),
+        CatalogScenario(
+            id: "02-odunpazari-bowl",
+            title: "Odunpazarı bowl",
+            teaches: [
+                "After save, this card still holds the opening count.",
+                "A new context reads 0, and the bowl name is filed."
+            ]
+        ),
+        CatalogScenario(
+            id: "03-wax-whisper",
+            title: "Wax whisper",
+            teaches: [
+                "An optional transient needs no default value.",
+                "A new context reads nil. The wax lot is filed."
+            ]
+        ),
+        CatalogScenario(
+            id: "04-stem-nick",
+            title: "Stem nick",
+            teaches: [
+                "A non-optional transient needs a default.",
+                "A new context reads that default, not the nick Halime set."
+            ]
+        ),
+        CatalogScenario(
+            id: "05-lattice-scratch",
+            title: "Lattice scratch",
+            teaches: [
+                "A transient property can hold a struct that is not a column.",
+                "A new context reads the default scratch. The bowl name is filed."
+            ]
+        ),
+        CatalogScenario(
+            id: "06-hide-case",
+            title: "Hide case",
+            teaches: [
+                "Two transient properties are both omitted from the schema.",
+                "A new context resets both. The leather grade is filed."
+            ]
+        ),
+        CatalogScenario(
+            id: "07-bedesten-aside",
+            title: "Bedesten aside",
+            teaches: [
+                "Writing the aside leaves the context unchanged.",
+                "The filed price stays 4000 lira."
+            ]
+        ),
+        CatalogScenario(
+            id: "08-bedesten-price",
+            title: "Bedesten price",
+            teaches: [
+                "A stored edit is filed. The aside is not.",
+                "This card keeps the aside after the save."
+            ]
+        ),
+        CatalogScenario(
+            id: "09-counter-reading",
+            title: "Counter reading",
+            teaches: [
+                "A fetch in this context returns the same card, aside included.",
+                "A new context is a different card and reads the default aside."
+            ]
+        ),
+        CatalogScenario(
+            id: "10-twin-lumps",
+            title: "Twin lumps",
+            teaches: [
+                "Each open card keeps its own seam note.",
+                "A new context defaults both notes. Both lump codes are filed."
+            ]
+        ),
+        CatalogScenario(
+            id: "11-two-benches",
+            title: "Two benches",
+            teaches: [
+                "Each model's transient property is omitted from that model.",
+                "The wax lot and the stem wood are filed."
+            ]
+        ),
+        CatalogScenario(
+            id: "12-trial-hour",
+            title: "Trial hour",
+            teaches: [
+                "A transient date uses its default on a new context.",
+                "The stem wood is filed."
+            ]
+        ),
+        CatalogScenario(
+            id: "13-bedesten-morning",
+            title: "Bedesten morning folder",
+            teaches: [
+                "One schema holds the four cards, and each aside is omitted.",
+                "A new context files the four desk facts and reads each default aside."
             ]
         )
     ]
