@@ -30,8 +30,8 @@ enum Catalog {
         CatalogFeature(
             id: "03-relationships",
             title: "Relationships",
-            summary: "Links between models, including to-one and to-many.",
-            scenarios: []
+            summary: "To-one and to-many links, inverses, and the counts and names stored on a relationship.",
+            scenarios: relationships
         ),
         CatalogFeature(
             id: "04-delete-rules",
@@ -357,6 +357,113 @@ enum Catalog {
             teaches: [
                 "One schema can hold several models, each with its own attribute marks.",
                 "The folder is the screen. The marks stay on the attributes."
+            ]
+        )
+    ]
+
+    private static let relationships: [CatalogScenario] = [
+        CatalogScenario(
+            id: "01-plasne-milk-note",
+            title: "Plasne milk note",
+            teaches: [
+                "An optional to-one can be absent.",
+                "Naming the fruitière puts this note on its roll."
+            ]
+        ),
+        CatalogScenario(
+            id: "02-plateau-roll",
+            title: "Plateau roll",
+            teaches: [
+                "The fruitière's roll is a to-many.",
+                "maximumModelCount stays 0, and the roll still holds both notes."
+            ]
+        ),
+        CatalogScenario(
+            id: "03-plasne-member-book",
+            title: "Plasne member book",
+            teaches: [
+                "Two relationships to one type need an explicit inverse each.",
+                "A member link and a guest link do not cross."
+            ]
+        ),
+        CatalogScenario(
+            id: "04-plasne-morning-vat",
+            title: "Plasne morning vat",
+            teaches: [
+                "Setting the wheel's vat fills the vat's wheel list.",
+                "The list is the inverse. Nobody appends to it."
+            ]
+        ),
+        CatalogScenario(
+            id: "05-rousses-young-cave",
+            title: "Rousses young cave",
+            teaches: [
+                "Appending the wheel sets its cave.",
+                "Taking a wheel off the rack clears that link and leaves the wheel in the store."
+            ]
+        ),
+        CatalogScenario(
+            id: "06-champagnole-spruce-board",
+            title: "Champagnole spruce board",
+            teaches: [
+                "@Relationship(.unique) keeps the wheel on one board.",
+                "A second board takes the wheel. The first board stays, with no wheel."
+            ]
+        ),
+        CatalogScenario(
+            id: "07-besancon-supper-card",
+            title: "Besançon supper card",
+            teaches: [
+                "minimumModelCount records that the card should name a buyer.",
+                "The buyer has no inverse, and a save with no buyer still files the card."
+            ]
+        ),
+        CatalogScenario(
+            id: "08-poligny-jury",
+            title: "Poligny jury",
+            teaches: [
+                "A taster and a wheel are a many-to-many.",
+                "Linking from either side fills the other side."
+            ]
+        ),
+        CatalogScenario(
+            id: "09-poligny-tasting-slip",
+            title: "Poligny tasting slip",
+            teaches: [
+                "The slip is one model with two to-one links.",
+                "Each inverse list contains that slip."
+            ]
+        ),
+        CatalogScenario(
+            id: "10-rousses-renamed-rack",
+            title: "Rousses renamed rack",
+            teaches: [
+                "originalName on the relationship keeps the previous name.",
+                "The inverse stores its own name. A relationship that omits originalName stores an empty one."
+            ]
+        ),
+        CatalogScenario(
+            id: "11-plasne-guest-reprint",
+            title: "Plasne guest reprint",
+            teaches: [
+                "hashModifier is stored on the relationship that sets it.",
+                "The member list and the inverse visit leave it nil."
+            ]
+        ),
+        CatalogScenario(
+            id: "12-rousses-aged-cave",
+            title: "Rousses aged cave",
+            teaches: [
+                "Pointing the wheel at the aged cave takes it off the young rack.",
+                "The wheel keeps its identity."
+            ]
+        ),
+        CatalogScenario(
+            id: "13-besancon-morning-folder",
+            title: "Besançon morning folder",
+            teaches: [
+                "One schema holds the pairs from the route.",
+                "After a save, each inverse still names the other side."
             ]
         )
     ]

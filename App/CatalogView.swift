@@ -123,6 +123,32 @@ struct CatalogView: View {
             SecondLicenseScreen()
         case "13-la-paz-morning-folder":
             ShawlHandoverScreen()
+        case "01-plasne-milk-note":
+            MilkNoteScreen()
+        case "02-plateau-roll":
+            PlateauRollScreen()
+        case "03-plasne-member-book":
+            CoopRollScreen()
+        case "04-plasne-morning-vat":
+            MorningVatScreen()
+        case "05-rousses-young-cave":
+            YoungCaveScreen()
+        case "06-champagnole-spruce-board":
+            SpruceBoardScreen()
+        case "07-besancon-supper-card":
+            SupperOrderScreen()
+        case "08-poligny-jury":
+            JuryWheelScreen()
+        case "09-poligny-tasting-slip":
+            TastingSlipScreen()
+        case "10-rousses-renamed-rack":
+            CheeseRackScreen()
+        case "11-plasne-guest-reprint":
+            GuestReprintScreen()
+        case "12-rousses-aged-cave":
+            AgedCaveScreen()
+        case "13-besancon-morning-folder":
+            ComteHandoverScreen()
         default:
             Text("That scenario is not bottled.")
                 .foregroundStyle(.secondary)

@@ -39,3 +39,45 @@ Shown in [Arequipa renamed kilos](features/02-attributes/06-arequipa-renamed-kil
 **What to do.** Give the ephemeral property a default. Read the option. After save, read the row from a new context when you need the filed value.
 
 Shown in [La Paz spoken markup](features/02-attributes/08-la-paz-spoken-markup/).
+
+## Relationships
+
+### A to-many whose maximum is 0 still holds every note
+
+**What happens.** `Fruitiere.notes` is declared `@Relationship` with no count arguments. The schema stores `minimumModelCount` 0 and `maximumModelCount` 0. The Pellier note and the Gaillard note are both appended. Both stay on the roll, and each note names the plateau fruitière.
+
+**Why it matters.** A clerk who reads 0 as "this roll holds nothing" will think the morning deliveries were refused.
+
+**What to do.** Treat 0 on a relationship that carries `@Relationship` as the omitted count. Count the models when you need the size of the roll.
+
+Shown in [Plateau roll](features/03-relationships/02-plateau-roll/).
+
+### A second unique board takes the wheel and leaves the first board in the store
+
+**What happens.** `SpruceBoard.wheel` is `@Relationship(.unique)` with `maximumModelCount` 1. Board SP-1 is given wheel PL-19. Board SP-2 is then given that same wheel. SP-1's wheel becomes nil. SP-2 carries PL-19. The save throws nothing. A fetch returns both boards.
+
+**Why it matters.** Unique does not refuse the second board, and it does not delete the first one. The wheel moves.
+
+**What to do.** After the second assignment, read both boards. The earlier board is still a row.
+
+Shown in [Champagnole spruce board](features/03-relationships/06-champagnole-spruce-board/).
+
+### A buyer minimum of 1 still files a card with no buyer
+
+**What happens.** `SupperOrder.buyer` is `@Relationship(minimumModelCount: 1)`. `SupperBuyer` has no relationship back, so `inverseName` is nil. The card is saved with no buyer. The save throws nothing. A new context fetches one card, and its buyer is nil.
+
+**Why it matters.** The minimum is a stored count. It does not stop the save.
+
+**What to do.** Read `minimumModelCount` from the schema. If the card must name a buyer, check the relationship before saving.
+
+Shown in [Besançon supper card](features/03-relationships/07-besancon-supper-card/).
+
+### An inverse stores its own name as the original name
+
+**What happens.** `CheeseRack.wheels` is `@Relationship(originalName: "meules")`. Its original name is `meules`. `RackWheel.rack` is the inverse and does not carry `@Relationship`. Its original name is `rack`. `RackWheel.label` carries `@Relationship` and omits `originalName`. Its original name is `""`. `ShelfLabel.wheel`, the inverse of that label, stores `wheel`.
+
+**Why it matters.** An empty original name means the macro omitted it. An inverse's own name in that field does not mean the relationship was renamed.
+
+**What to do.** Treat a non-empty original name as a previous name on the relationship that carries `@Relationship`. On an inverse that does not carry the macro, the stored original name is the property name.
+
+Shown in [Rousses renamed rack](features/03-relationships/10-rousses-renamed-rack/).

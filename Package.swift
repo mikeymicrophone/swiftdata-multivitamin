@@ -44,12 +44,27 @@ let package = Package(
                 "features/02-attributes/10-puno-bale-code/README.md",
                 "features/02-attributes/11-puno-seal-and-photo/README.md",
                 "features/02-attributes/12-lucanas-second-card/README.md",
-                "features/02-attributes/13-la-paz-morning-folder/README.md"
+                "features/02-attributes/13-la-paz-morning-folder/README.md",
+                "features/03-relationships/README.md",
+                "features/03-relationships/01-plasne-milk-note/README.md",
+                "features/03-relationships/02-plateau-roll/README.md",
+                "features/03-relationships/03-plasne-member-book/README.md",
+                "features/03-relationships/04-plasne-morning-vat/README.md",
+                "features/03-relationships/05-rousses-young-cave/README.md",
+                "features/03-relationships/06-champagnole-spruce-board/README.md",
+                "features/03-relationships/07-besancon-supper-card/README.md",
+                "features/03-relationships/08-poligny-jury/README.md",
+                "features/03-relationships/09-poligny-tasting-slip/README.md",
+                "features/03-relationships/10-rousses-renamed-rack/README.md",
+                "features/03-relationships/11-plasne-guest-reprint/README.md",
+                "features/03-relationships/12-rousses-aged-cave/README.md",
+                "features/03-relationships/13-besancon-morning-folder/README.md"
             ],
             sources: [
                 "App",
                 "features/01-model-basics",
-                "features/02-attributes"
+                "features/02-attributes",
+                "features/03-relationships"
             ]
         ),
         .testTarget(
