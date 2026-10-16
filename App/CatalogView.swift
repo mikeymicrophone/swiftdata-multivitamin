@@ -97,6 +97,32 @@ struct CatalogView: View {
             BenchSlipScreen()
         case "13-morning-handover-folder":
             MorningHandoverScreen()
+        case "01-lucanas-ear-mark":
+            ShearingLicenseScreen()
+        case "02-arequipa-weigh-photo":
+            WeighTicketScreen()
+        case "03-puno-lot-spotlight":
+            RoadLotScreen()
+        case "04-sucre-dye-note":
+            DyeFormulaScreen()
+        case "05-lucanas-agreed-price":
+            AgreedPriceScreen()
+        case "06-arequipa-renamed-kilos":
+            ScouredWeightScreen()
+        case "07-arequipa-ledger-reprint":
+            SeasonReprintScreen()
+        case "08-la-paz-spoken-markup":
+            ShawlCounterScreen()
+        case "09-tarabuco-micron-reading":
+            FiberSampleScreen()
+        case "10-puno-bale-code":
+            BalePlateScreen()
+        case "11-puno-seal-and-photo":
+            BalePackScreen()
+        case "12-lucanas-second-card":
+            SecondLicenseScreen()
+        case "13-la-paz-morning-folder":
+            ShawlHandoverScreen()
         default:
             Text("That scenario is not bottled.")
                 .foregroundStyle(.secondary)
