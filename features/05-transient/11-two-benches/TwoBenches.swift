@@ -8,11 +8,9 @@ import SwiftData
 import SwiftUI
 
 struct TwoBenchScreen: View {
-    private let container = MemoryStore.containerOrCrash(WaxCook.self, StemFit.self)
-
     var body: some View {
         TwoBenchEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: WaxCook.self, StemFit.self)
     }
 }
 
@@ -50,7 +48,6 @@ private struct TwoBenchEditor: View {
                 )
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func fileBoth() {

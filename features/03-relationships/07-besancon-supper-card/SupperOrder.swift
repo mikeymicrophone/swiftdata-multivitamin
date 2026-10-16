@@ -37,11 +37,9 @@ final class SupperOrder {
 }
 
 struct SupperOrderScreen: View {
-    private let container = MemoryStore.containerOrCrash(SupperOrder.self, SupperBuyer.self)
-
     var body: some View {
         SupperOrderEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: SupperOrder.self, SupperBuyer.self)
     }
 }
 
@@ -78,9 +76,6 @@ private struct SupperOrderEditor: View {
                     openCard()
                 }
             }
-        }
-        .onAppear {
-            modelContext.autosaveEnabled = false
         }
     }
 

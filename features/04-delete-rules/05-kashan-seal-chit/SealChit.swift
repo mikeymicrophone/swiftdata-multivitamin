@@ -31,11 +31,9 @@ final class SealChit {
 }
 
 struct SealChitScreen: View {
-    private let container = MemoryStore.containerOrCrash(SealChit.self, WarrantCook.self)
-
     var body: some View {
         SealChitEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: SealChit.self, WarrantCook.self)
     }
 }
 
@@ -68,7 +66,6 @@ private struct SealChitEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func writeChit() {
@@ -85,8 +82,8 @@ private struct SealChitEditor: View {
         modelContext.delete(chit)
         try? modelContext.save()
         let filed = ModelContext(modelContext.container)
-        chitCount = ((try? filed.fetch(FetchDescriptor<SealChit>())) ?? []).count
-        cookCount = ((try? filed.fetch(FetchDescriptor<WarrantCook>())) ?? []).count
+        chitCount = (try? filed.fetchCount(FetchDescriptor<SealChit>())) ?? 0
+        cookCount = (try? filed.fetchCount(FetchDescriptor<WarrantCook>())) ?? 0
     }
 }
 

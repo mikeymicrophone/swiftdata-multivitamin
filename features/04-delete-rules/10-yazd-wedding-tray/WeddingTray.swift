@@ -45,11 +45,9 @@ final class WeddingTray {
 }
 
 struct WeddingTrayScreen: View {
-    private let container = MemoryStore.containerOrCrash(WeddingTray.self, PlaceCard.self, QamsarLot.self)
-
     var body: some View {
         WeddingTrayEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: WeddingTray.self, PlaceCard.self, QamsarLot.self)
     }
 }
 
@@ -83,7 +81,6 @@ private struct WeddingTrayEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func layCards() {

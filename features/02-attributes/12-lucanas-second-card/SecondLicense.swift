@@ -7,20 +7,44 @@
 import SwiftData
 import SwiftUI
 
-struct SecondLicenseScreen: View {
-    private let container = MemoryStore.containerOrCrash(ShearingLicense.self)
+/// The clerk's card as plain values, so it can cross into the actor.
+struct LicenseDraft: Sendable {
+    var earMark = "LQ-184"
+    var communityName = "Comunidad campesina de Lucanas"
+    var clerkName = "Florentina Quispe"
+    var conditionNote: String
+    var shornOn = GregorianDay.date(year: 2026, month: 6, day: 8, timeZoneIdentifier: "America/Lima")
+}
 
+@ModelActor
+actor LicenseClerk {
+    func file(_ draft: LicenseDraft) throws -> PersistentIdentifier {
+        let license = ShearingLicense(
+            earMark: draft.earMark,
+            communityName: draft.communityName,
+            clerkName: draft.clerkName,
+            conditionNote: draft.conditionNote,
+            shornOn: draft.shornOn
+        )
+        modelContext.insert(license)
+        try modelContext.save()
+        return license.persistentModelID
+    }
+}
+
+struct SecondLicenseScreen: View {
     var body: some View {
         SecondLicenseEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: ShearingLicense.self)
     }
 }
 
 private struct SecondLicenseEditor: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var license: ShearingLicense?
-    @State private var identityAtOpening = ""
-    @State private var filedSecondCard = false
+    @State private var clerk: LicenseClerk?
+    @State private var firstID: PersistentIdentifier?
+    @State private var book: [ShearingLicense]?
+    @State private var problem: String?
 
     var body: some View {
         ScenarioChrome(
@@ -32,57 +56,48 @@ private struct SecondLicenseEditor: View {
                 "That row keeps the first identity and takes the new values."
             ]
         ) {
-            if let license {
-                Section(license.earMark) {
-                    LabeledContent("Clerk", value: license.clerkName)
-                    LabeledContent("Condition", value: license.conditionNote)
-                    LabeledContent(
-                        "Identity",
-                        value: filedSecondCard && String(describing: license.persistentModelID) == identityAtOpening
-                            ? "Same license on the nail"
-                            : "First license"
-                    )
+            switch (firstID, book) {
+            case (nil, _):
+                Button("File the first license") {
+                    Task { await fileFirst() }
                 }
-                if !filedSecondCard {
-                    Button("File the second card") {
-                        fileSecondCard()
+            case (.some, nil):
+                LabeledContent("First license", value: "Filed by the clerk")
+                Button("File the second card") {
+                    Task { await fileSecond() }
+                }
+            case let (.some(firstID), .some(rows)):
+                Section("The book") {
+                    LabeledContent("Rows for LQ-184", value: rows.count, format: .number)
+                    ForEach(rows) { row in
+                        LabeledContent("Condition", value: row.conditionNote)
+                        LabeledContent("Identity", value: row.persistentModelID == firstID ? "Same license on the nail" : "A new license")
                     }
                 }
-            } else {
-                Button("File the first license") {
-                    fileFirstLicense()
-                }
+            }
+            if let problem {
+                Text(problem).foregroundStyle(.red)
             }
         }
-        .onAppear {
-            modelContext.autosaveEnabled = false
+    }
+
+    private func fileFirst() async {
+        let clerk = LicenseClerk(modelContainer: modelContext.container)
+        self.clerk = clerk
+        do {
+            firstID = try await clerk.file(LicenseDraft(conditionNote: "Clear coat, no cut"))
+        } catch {
+            problem = "The first license was not filed: \(error.localizedDescription)"
         }
     }
 
-    private func fileFirstLicense() {
-        let license = ShearingLicense(
-            earMark: "LQ-184",
-            communityName: "Comunidad campesina de Lucanas",
-            clerkName: "Florentina Quispe",
-            conditionNote: "Clear coat, no cut",
-            shornOn: GregorianDay.date(year: 2026, month: 6, day: 8, timeZoneIdentifier: "America/Lima")
-        )
-        modelContext.insert(license)
-        try? modelContext.save()
-        identityAtOpening = String(describing: license.persistentModelID)
-        self.license = license
-    }
-
-    private func fileSecondCard() {
-        let second = ShearingLicense(
-            earMark: "LQ-184",
-            communityName: "Comunidad campesina de Lucanas",
-            clerkName: "Florentina Quispe",
-            conditionNote: "Cut on the left shoulder",
-            shornOn: GregorianDay.date(year: 2026, month: 6, day: 8, timeZoneIdentifier: "America/Lima")
-        )
-        modelContext.insert(second)
-        try? modelContext.save()
-        filedSecondCard = true
+    private func fileSecond() async {
+        guard let clerk else { return }
+        do {
+            _ = try await clerk.file(LicenseDraft(conditionNote: "Cut on the left shoulder"))
+            book = try modelContext.fetch(FetchDescriptor<ShearingLicense>(predicate: #Predicate<ShearingLicense> { $0.earMark == "LQ-184" }))
+        } catch {
+            problem = "The second card was not filed: \(error.localizedDescription)"
+        }
     }
 }

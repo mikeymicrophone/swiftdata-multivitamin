@@ -8,11 +8,9 @@ import SwiftData
 import SwiftUI
 
 struct TornSlipScreen: View {
-    private let container = MemoryStore.containerOrCrash(CookBatch.self, TasteSlip.self)
-
     var body: some View {
         TornSlipEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CookBatch.self, TasteSlip.self)
     }
 }
 
@@ -46,7 +44,6 @@ private struct TornSlipEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func hangSlips() {

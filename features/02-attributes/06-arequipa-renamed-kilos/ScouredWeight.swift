@@ -23,11 +23,9 @@ final class ScouredWeight {
 }
 
 struct ScouredWeightScreen: View {
-    private let container = MemoryStore.containerOrCrash(ScouredWeight.self)
-
     var body: some View {
         ScouredWeightEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: ScouredWeight.self)
     }
 }
 

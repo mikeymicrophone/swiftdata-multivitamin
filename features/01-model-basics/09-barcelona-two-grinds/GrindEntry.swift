@@ -23,11 +23,9 @@ final class GrindEntry {
 }
 
 struct GrindEntryScreen: View {
-    private let container = MemoryStore.containerOrCrash(GrindEntry.self)
-
     var body: some View {
         GrindEntryEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: GrindEntry.self)
     }
 }
 

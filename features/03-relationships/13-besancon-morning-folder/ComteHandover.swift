@@ -21,19 +21,9 @@ enum ComteFolder {
 }
 
 struct ComteHandoverScreen: View {
-    private let container: ModelContainer
-
-    init() {
-        do {
-            container = try MemoryStore.make(ComteFolder.types)
-        } catch {
-            fatalError("In-memory store failed: \(error)")
-        }
-    }
-
     var body: some View {
         ComteHandoverEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: ComteFolder.types)
     }
 }
 
@@ -67,9 +57,6 @@ private struct ComteHandoverEditor: View {
                     layOut()
                 }
             }
-        }
-        .onAppear {
-            modelContext.autosaveEnabled = false
         }
     }
 

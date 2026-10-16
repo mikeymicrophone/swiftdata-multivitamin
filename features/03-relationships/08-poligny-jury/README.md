@@ -15,6 +15,6 @@ On 8 September Inès Garnier and Paul Besnard taste wheel PL-19 at the Maison du
 
 **Try it**
 
-Open Poligny jury. Seat the jury and read both names on PL-19.
+Open Poligny jury. Seat the jury, then pick each taster. The picker reads a sorted `@Query`; the wheel list below is a second `@Query` whose `#Predicate` looks inside the wheel's taster list. PL-19 shows up for both.
 
 `swift test` locks both directions in `juryLinksFromEitherSide`.

@@ -23,11 +23,9 @@ final class BenchSlip {
 }
 
 struct BenchSlipScreen: View {
-    private let container = MemoryStore.containerOrCrash(BenchSlip.self)
-
     var body: some View {
         BenchSlipEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: BenchSlip.self)
     }
 }
 
@@ -60,9 +58,6 @@ private struct BenchSlipEditor: View {
                     registerImpression()
                 }
             }
-        }
-        .onAppear {
-            modelContext.autosaveEnabled = false
         }
     }
 

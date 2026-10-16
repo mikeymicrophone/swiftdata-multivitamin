@@ -8,11 +8,9 @@ import SwiftData
 import SwiftUI
 
 struct AgedCaveScreen: View {
-    private let container = MemoryStore.containerOrCrash(CaveWheel.self, AgingCave.self)
-
     var body: some View {
         AgedCaveEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CaveWheel.self, AgingCave.self)
     }
 }
 
@@ -47,9 +45,6 @@ private struct AgedCaveEditor: View {
                     rackYoung()
                 }
             }
-        }
-        .onAppear {
-            modelContext.autosaveEnabled = false
         }
     }
 

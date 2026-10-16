@@ -44,11 +44,9 @@ final class CheeseRack {
 }
 
 struct CheeseRackScreen: View {
-    private let container = MemoryStore.containerOrCrash(CheeseRack.self, RackWheel.self, ShelfLabel.self)
-
     var body: some View {
         CheeseRackEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CheeseRack.self, RackWheel.self, ShelfLabel.self)
     }
 }
 

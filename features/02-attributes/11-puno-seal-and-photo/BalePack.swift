@@ -26,11 +26,9 @@ final class BalePack {
 }
 
 struct BalePackScreen: View {
-    private let container = MemoryStore.containerOrCrash(BalePack.self)
-
     var body: some View {
         BalePackEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: BalePack.self)
     }
 }
 

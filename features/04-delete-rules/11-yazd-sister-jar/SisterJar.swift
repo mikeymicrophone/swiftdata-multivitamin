@@ -31,11 +31,9 @@ final class RoseJar {
 }
 
 struct SisterJarScreen: View {
-    private let container = MemoryStore.containerOrCrash(JarLot.self, RoseJar.self)
-
     var body: some View {
         SisterJarEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: JarLot.self, RoseJar.self)
     }
 }
 
@@ -68,7 +66,6 @@ private struct SisterJarEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func setJars() {

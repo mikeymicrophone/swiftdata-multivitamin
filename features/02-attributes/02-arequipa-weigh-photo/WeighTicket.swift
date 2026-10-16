@@ -29,11 +29,9 @@ final class WeighTicket {
 }
 
 struct WeighTicketScreen: View {
-    private let container = MemoryStore.containerOrCrash(WeighTicket.self)
-
     var body: some View {
         WeighTicketEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: WeighTicket.self)
     }
 }
 

@@ -31,11 +31,9 @@ final class BlankCook {
 }
 
 struct BlankCardScreen: View {
-    private let container = MemoryStore.containerOrCrash(BlankCook.self, BlankSlip.self)
-
     var body: some View {
         BlankCardEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: BlankCook.self, BlankSlip.self)
     }
 }
 
@@ -67,7 +65,6 @@ private struct BlankCardEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func writeCard() {
@@ -81,7 +78,7 @@ private struct BlankCardEditor: View {
         modelContext.delete(cook)
         try? modelContext.save()
         let filed = ModelContext(modelContext.container)
-        cookCount = ((try? filed.fetch(FetchDescriptor<BlankCook>())) ?? []).count
+        cookCount = (try? filed.fetchCount(FetchDescriptor<BlankCook>())) ?? 0
     }
 }
 

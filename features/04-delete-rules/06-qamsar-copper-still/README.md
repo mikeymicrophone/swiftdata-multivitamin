@@ -15,6 +15,6 @@ On 16 May the card for Still 2 is pulled while cook QS-22 is charged. Farhad Gol
 
 **Try it**
 
-Open Qamsar copper still. Charge the still, pull the card, and read the filed cook.
+Open Qamsar copper still. Charge the still, then pull the card. The desk warns that a cook is still charged, and the store pulls the card anyway. The filed cook is found by a `#Predicate` on its empty still line.
 
 `swift test` locks the stored deny and the remaining cook in `denyStillSavesAndKeepsTheCook`.

@@ -43,11 +43,9 @@ final class VoidCook {
 }
 
 struct CookAndStillScreen: View {
-    private let container = MemoryStore.containerOrCrash(VoidCook.self, VoidSlip.self, BenchStill.self)
-
     var body: some View {
         CookAndStillEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: VoidCook.self, VoidSlip.self, BenchStill.self)
     }
 }
 
@@ -80,7 +78,6 @@ private struct CookAndStillEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func fileCook() {

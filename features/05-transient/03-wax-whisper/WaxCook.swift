@@ -23,11 +23,9 @@ final class WaxCook {
 }
 
 struct WaxCookScreen: View {
-    private let container = MemoryStore.containerOrCrash(WaxCook.self)
-
     var body: some View {
         WaxCookEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: WaxCook.self)
     }
 }
 
@@ -61,7 +59,6 @@ private struct WaxCookEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func open() {
@@ -78,7 +75,7 @@ private struct WaxCookEditor: View {
     private func file(_ cook: WaxCook) {
         try? modelContext.save()
         liveWhisper = cook.whisper ?? "Unspoken"
-        let filed = (try? ModelContext(modelContext.container).fetch(FetchDescriptor<WaxCook>()))?.first
+        let filed = try? modelContext.freshFirst(WaxCook.self)
         filedLot = filed?.lotCode ?? "Missing"
         filedWhisper = filed?.whisper ?? "Unspoken"
     }

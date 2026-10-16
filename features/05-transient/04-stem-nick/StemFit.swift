@@ -23,11 +23,9 @@ final class StemFit {
 }
 
 struct StemFitScreen: View {
-    private let container = MemoryStore.containerOrCrash(StemFit.self)
-
     var body: some View {
         StemFitEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: StemFit.self)
     }
 }
 
@@ -61,7 +59,6 @@ private struct StemFitEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func open() {
@@ -78,7 +75,7 @@ private struct StemFitEditor: View {
     private func file(_ stem: StemFit) {
         try? modelContext.save()
         liveNick = stem.nick
-        let filed = (try? ModelContext(modelContext.container).fetch(FetchDescriptor<StemFit>()))?.first
+        let filed = try? modelContext.freshFirst(StemFit.self)
         filedWood = filed?.wood ?? "Missing"
         filedNick = filed?.nick ?? "Missing"
     }

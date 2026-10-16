@@ -8,20 +8,33 @@ import SwiftData
 import SwiftUI
 
 struct BedestenPriceScreen: View {
-    private let container = MemoryStore.containerOrCrash(BedestenCard.self)
-
     var body: some View {
         BedestenPriceEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: BedestenCard.self)
     }
+}
+
+/// One side of the comparison: what a card says when it is read.
+private struct CardReading {
+    let priceLira: Int
+    let aside: String
+
+    init(_ card: BedestenCard) {
+        priceLira = card.priceLira
+        aside = card.aside
+    }
+}
+
+private enum Filing {
+    case drafting
+    case filed(open: CardReading, fresh: CardReading)
+    case failed(String)
 }
 
 private struct BedestenPriceEditor: View {
     @Environment(\.modelContext) private var modelContext
     @State private var card: BedestenCard?
-    @State private var liveAside = ""
-    @State private var filedPrice = ""
-    @State private var filedAside = ""
+    @State private var filing = Filing.drafting
 
     var body: some View {
         ScenarioChrome(
@@ -34,19 +47,24 @@ private struct BedestenPriceEditor: View {
             ]
         ) {
             if let card {
-                PriceFields(card: card, liveAside: liveAside, filedPrice: filedPrice, filedAside: filedAside)
-                if filedPrice.isEmpty {
-                    Button("Rewrite the price") {
-                        rewrite(card)
-                    }
+                PriceFields(card: card)
+                switch filing {
+                case .drafting:
+                    Button("Rewrite the price") { rewrite(card) }
+                case let .filed(open, fresh):
+                    ReadingGrid(open: open, fresh: fresh)
+                case .failed(let reason):
+                    Label(reason, systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.red)
+                }
+                Section {
+                    Text("She reads the open card again before Emre arrives.")
+                        .foregroundStyle(.secondary)
                 }
             } else {
-                Button("Open the counter card") {
-                    open()
-                }
+                Button("Open the counter card") { open() }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func open() {
@@ -63,38 +81,60 @@ private struct BedestenPriceEditor: View {
 
     private func rewrite(_ card: BedestenCard) {
         card.aside = "Hold it for Emre"
-        card.priceLira = 4500
-        try? modelContext.save()
-        liveAside = card.aside
-        let filed = (try? ModelContext(modelContext.container).fetch(FetchDescriptor<BedestenCard>()))?.first
-        filedPrice = filed.map { "\($0.priceLira) lira" } ?? "Missing"
-        filedAside = filed?.aside.isEmpty == false ? (filed?.aside ?? "Missing") : "Empty"
+        if card.priceLira == 4000 {
+            card.priceLira = 4500
+        }
+        do {
+            try modelContext.save()
+            guard let fresh = try modelContext.freshFirst(BedestenCard.self) else {
+                filing = .failed("The book has no card for \(card.pipeCode).")
+                return
+            }
+            filing = .filed(open: CardReading(card), fresh: CardReading(fresh))
+        } catch {
+            filing = .failed(error.localizedDescription)
+        }
     }
 }
 
 private struct PriceFields: View {
-    let card: BedestenCard
-    let liveAside: String
-    let filedPrice: String
-    let filedAside: String
+    @Bindable var card: BedestenCard
 
     var body: some View {
         Section(card.pipeCode) {
             LabeledContent("Seller", value: card.sellerName)
-            LabeledContent("Price on this card", value: "\(card.priceLira) lira")
-            if !liveAside.isEmpty {
-                LabeledContent("Aside on this card", value: liveAside)
+            Stepper(value: $card.priceLira, in: 3000...6000, step: 500) {
+                LabeledContent("Price on this card", value: "\(card.priceLira) lira")
             }
         }
-        if !filedPrice.isEmpty {
-            Section("Filed card") {
-                LabeledContent("Price", value: filedPrice)
-                LabeledContent("Aside", value: filedAside)
+    }
+}
+
+private struct ReadingGrid: View {
+    let open: CardReading
+    let fresh: CardReading
+
+    var body: some View {
+        Section("Open card and filed card") {
+            Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {
+                GridRow {
+                    Text("")
+                    Text("Price").bold()
+                    Text("Aside").bold()
+                }
+                Divider()
+                row("This card", open)
+                row("New context", fresh)
             }
         }
-        Section {
-            Text("She reads the open card again before Emre arrives.")
-                .foregroundStyle(.secondary)
+    }
+
+    @ViewBuilder
+    private func row(_ title: String, _ reading: CardReading) -> some View {
+        GridRow {
+            Text(title).foregroundStyle(.secondary)
+            Text("\(reading.priceLira) lira")
+            Text(reading.aside.isEmpty ? "Empty" : reading.aside)
         }
     }
 }

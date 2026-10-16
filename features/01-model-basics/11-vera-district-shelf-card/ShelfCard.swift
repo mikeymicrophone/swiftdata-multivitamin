@@ -23,11 +23,9 @@ final class ShelfCard {
 }
 
 struct ShelfCardScreen: View {
-    private let container = MemoryStore.containerOrCrash(ShelfCard.self)
-
     var body: some View {
         ShelfCardEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: ShelfCard.self)
     }
 }
 

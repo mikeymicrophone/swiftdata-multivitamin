@@ -25,11 +25,9 @@ final class HideCase {
 }
 
 struct HideCaseScreen: View {
-    private let container = MemoryStore.containerOrCrash(HideCase.self)
-
     var body: some View {
         HideCaseEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: HideCase.self)
     }
 }
 
@@ -64,7 +62,6 @@ private struct HideCaseEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func open() {
@@ -83,7 +80,7 @@ private struct HideCaseEditor: View {
     private func file(_ hide: HideCase) {
         try? modelContext.save()
         liveLine = "\(hide.spareThongs) thongs, \(hide.stitchAside)"
-        let filed = (try? ModelContext(modelContext.container).fetch(FetchDescriptor<HideCase>()))?.first
+        let filed = try? modelContext.freshFirst(HideCase.self)
         filedGrade = filed?.grade ?? "Missing"
         if let filed {
             let aside = filed.stitchAside.isEmpty ? "empty aside" : filed.stitchAside

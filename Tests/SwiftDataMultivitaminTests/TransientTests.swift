@@ -81,7 +81,7 @@ struct TransientTests {
             bowlName: "Lattice egg",
             carverName: "Nesrin Kaya",
             carvedOn: GregorianDay.date(year: 2026, month: 4, day: 6, timeZoneIdentifier: "Europe/Istanbul"),
-            scratch: LatticeScratch(openings: 14, note: "Stop before the grey")
+            scratch: .marked(openings: 14, note: "Stop before the grey")
         )
         context.insert(bowl)
         try context.save()
@@ -93,6 +93,7 @@ struct TransientTests {
         #expect(filed.first?.bowlName == "Lattice egg")
         #expect(filed.first?.scratch.openings == 0)
         #expect(filed.first?.scratch.note == "")
+        #expect(filed.first?.scratch == .blank)
     }
 
     @Test func bothCaseNotesReset() throws {
@@ -251,6 +252,8 @@ struct TransientTests {
         #expect(stem.triedAt == trial)
         #expect(filed.first?.wood == "Cherry")
         #expect(filed.first?.triedAt == opening)
+        #expect(stem.hoursAfterOpening == 8)
+        #expect(filed.first?.hoursAfterOpening == 0)
     }
 
     @Test func morningFolderDefaultsEveryAside() throws {

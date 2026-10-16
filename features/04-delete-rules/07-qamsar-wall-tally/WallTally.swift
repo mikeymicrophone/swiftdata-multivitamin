@@ -32,11 +32,9 @@ final class WallTally {
 }
 
 struct WallTallyScreen: View {
-    private let container = MemoryStore.containerOrCrash(WallTally.self, ChalkMark.self)
-
     var body: some View {
         WallTallyEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: WallTally.self, ChalkMark.self)
     }
 }
 
@@ -69,7 +67,6 @@ private struct WallTallyEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func chalk() {

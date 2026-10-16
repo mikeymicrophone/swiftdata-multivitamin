@@ -8,11 +8,9 @@ import SwiftData
 import SwiftUI
 
 struct GuestReprintScreen: View {
-    private let container = MemoryStore.containerOrCrash(CoopRoll.self, CoopHand.self)
-
     var body: some View {
         GuestReprintEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CoopRoll.self, CoopHand.self)
     }
 }
 

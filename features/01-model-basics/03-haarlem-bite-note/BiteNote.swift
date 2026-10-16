@@ -31,11 +31,9 @@ final class BiteNote {
 }
 
 struct BiteNoteScreen: View {
-    private let container = MemoryStore.containerOrCrash(BiteNote.self)
-
     var body: some View {
         BiteNoteEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: BiteNote.self)
     }
 }
 

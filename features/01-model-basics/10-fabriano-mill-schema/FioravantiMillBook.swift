@@ -36,19 +36,9 @@ enum FioravantiMillBook {
 }
 
 struct FioravantiMillBookScreen: View {
-    private let container: ModelContainer
-
-    init() {
-        do {
-            container = try MemoryStore.make([RagLot.self, DeckleProof.self])
-        } catch {
-            fatalError("In-memory store failed: \(error)")
-        }
-    }
-
     var body: some View {
         FioravantiMillBookEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: [RagLot.self, DeckleProof.self])
     }
 }
 

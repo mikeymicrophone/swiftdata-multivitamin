@@ -46,11 +46,9 @@ final class CopperBlankTicket {
 }
 
 struct CopperBlankTicketScreen: View {
-    private let container = MemoryStore.containerOrCrash(CopperBlankTicket.self)
-
     var body: some View {
         CopperBlankTicketEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CopperBlankTicket.self)
     }
 }
 

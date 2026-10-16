@@ -45,11 +45,9 @@ final class DeskBriefing {
 }
 
 struct DeskBriefingScreen: View {
-    private let container = MemoryStore.containerOrCrash(DeskBriefing.self)
-
     var body: some View {
         DeskBriefingEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: DeskBriefing.self)
     }
 }
 

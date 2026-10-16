@@ -17,19 +17,9 @@ enum ShawlFolder {
 }
 
 struct ShawlHandoverScreen: View {
-    private let container: ModelContainer
-
-    init() {
-        do {
-            container = try MemoryStore.make(ShawlFolder.types)
-        } catch {
-            fatalError("In-memory store failed: \(error)")
-        }
-    }
-
     var body: some View {
         ShawlHandoverEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: ShawlFolder.types)
     }
 }
 

@@ -10,6 +10,8 @@ import SwiftUI
 @Model
 final class JuryWheel {
     var code: String
+    // The inverse is declared here, on the wheel. The taster's list needs no macro.
+    @Relationship(inverse: \JuryTaster.wheels)
     var tasters: [JuryTaster] = []
 
     init(code: String) {
@@ -20,7 +22,6 @@ final class JuryWheel {
 @Model
 final class JuryTaster {
     var tasterName: String
-    @Relationship(inverse: \JuryWheel.tasters)
     var wheels: [JuryWheel] = []
 
     init(tasterName: String) {
@@ -29,19 +30,17 @@ final class JuryTaster {
 }
 
 struct JuryWheelScreen: View {
-    private let container = MemoryStore.containerOrCrash(JuryWheel.self, JuryTaster.self)
-
     var body: some View {
         JuryWheelEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: JuryWheel.self, JuryTaster.self)
     }
 }
 
 private struct JuryWheelEditor: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var wheel: JuryWheel?
-    @State private var ines: JuryTaster?
-    @State private var paul: JuryTaster?
+    @Query(sort: [SortDescriptor(\JuryTaster.tasterName, comparator: .localizedStandard)])
+    private var tasters: [JuryTaster]
+    @State private var chosenTaster = ""
 
     var body: some View {
         ScenarioChrome(
@@ -53,14 +52,29 @@ private struct JuryWheelEditor: View {
                 "Linking from either side fills the other side."
             ]
         ) {
-            if let wheel, let ines, let paul {
-                JuryFields(wheel: wheel, ines: ines, paul: paul, schema: modelContext.container.schema)
+            if tasters.isEmpty {
+                Button("Seat the jury", action: seatJury)
             } else {
-                Button("Seat the jury") {
-                    seatJury()
+                Section("Maison du Comté, Poligny") {
+                    LabeledContent("Tasters to one", value: isToOne("tasters", on: "JuryWheel") ? "Yes" : "No")
+                    LabeledContent("Wheels to one", value: isToOne("wheels", on: "JuryTaster") ? "Yes" : "No")
+                    Picker("Taster", selection: $chosenTaster) {
+                        ForEach(tasters) { taster in
+                            Text(taster.tasterName).tag(taster.tasterName)
+                        }
+                    }
                 }
+                WheelsTasted(by: chosenTaster)
+            }
+            Section {
+                Text("Inès writes the tasting slip the next morning.")
+                    .foregroundStyle(.secondary)
             }
         }
+    }
+
+    private func isToOne(_ name: String, on typeName: String) -> Bool {
+        StoredRelationship.named(name, on: typeName, in: modelContext.container.schema)?.isToOneRelationship == true
     }
 
     private func seatJury() {
@@ -72,47 +86,33 @@ private struct JuryWheelEditor: View {
         modelContext.insert(paul)
         wheel.tasters.append(ines)
         paul.wheels.append(wheel)
-        self.wheel = wheel
-        self.ines = ines
-        self.paul = paul
+        try? modelContext.save()
+        chosenTaster = ines.tasterName
     }
 }
 
-private struct JuryFields: View {
-    let wheel: JuryWheel
-    let ines: JuryTaster
-    let paul: JuryTaster
-    let schema: Schema
+/// A query built per taster: the predicate walks the to-many from the wheel's side.
+private struct WheelsTasted: View {
+    let tasterName: String
+    @Query private var wheels: [JuryWheel]
 
-    private var wheelsLink: Schema.Relationship? {
-        StoredRelationship.named("wheels", on: "JuryTaster", in: schema)
-    }
-
-    private var tastersLink: Schema.Relationship? {
-        StoredRelationship.named("tasters", on: "JuryWheel", in: schema)
+    init(by tasterName: String) {
+        self.tasterName = tasterName
+        _wheels = Query(
+            filter: #Predicate<JuryWheel> { wheel in
+                wheel.tasters.contains { taster in taster.tasterName == tasterName }
+            },
+            sort: \.code
+        )
     }
 
     var body: some View {
-        Section("Maison du Comté, Poligny") {
-            LabeledContent("Tasters to one", value: tastersLink?.isToOneRelationship == true ? "Yes" : "No")
-            LabeledContent("Wheels to one", value: wheelsLink?.isToOneRelationship == true ? "Yes" : "No")
-        }
-
-        Section(wheel.code) {
-            Text(wheel.tasters.map(\.tasterName).sorted().joined(separator: ", "))
-        }
-
-        Section(ines.tasterName) {
-            Text(ines.wheels.map(\.code).joined(separator: ", "))
-        }
-
-        Section(paul.tasterName) {
-            Text(paul.wheels.map(\.code).joined(separator: ", "))
-        }
-
-        Section {
-            Text("Inès writes the tasting slip the next morning.")
-                .foregroundStyle(.secondary)
+        Section("Wheels tasted by \(tasterName)") {
+            ForEach(wheels) { wheel in
+                LabeledContent(wheel.code) {
+                    Text(wheel.tasters.map(\.tasterName).sorted(), format: .list(type: .and))
+                }
+            }
         }
     }
 }

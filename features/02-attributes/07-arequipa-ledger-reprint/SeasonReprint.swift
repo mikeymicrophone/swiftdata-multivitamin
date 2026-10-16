@@ -23,11 +23,9 @@ final class SeasonReprint {
 }
 
 struct SeasonReprintScreen: View {
-    private let container = MemoryStore.containerOrCrash(SeasonReprint.self)
-
     var body: some View {
         SeasonReprintEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: SeasonReprint.self)
     }
 }
 

@@ -34,11 +34,9 @@ final class QuinceCommission {
 }
 
 struct QuinceCommissionScreen: View {
-    private let container = MemoryStore.containerOrCrash(QuinceCommission.self)
-
     var body: some View {
         QuinceCommissionEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: QuinceCommission.self)
     }
 }
 

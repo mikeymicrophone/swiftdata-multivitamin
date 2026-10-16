@@ -23,11 +23,9 @@ final class CarvedBowl {
 }
 
 struct CarvedBowlScreen: View {
-    private let container = MemoryStore.containerOrCrash(CarvedBowl.self)
-
     var body: some View {
         CarvedBowlEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: CarvedBowl.self)
     }
 }
 
@@ -66,7 +64,6 @@ private struct CarvedBowlEditor: View {
                 }
             }
         }
-        .onAppear { modelContext.autosaveEnabled = false }
     }
 
     private func open() {
@@ -83,7 +80,7 @@ private struct CarvedBowlEditor: View {
     private func file(_ bowl: CarvedBowl) {
         try? modelContext.save()
         liveOpenings = bowl.openings
-        let filed = (try? ModelContext(modelContext.container).fetch(FetchDescriptor<CarvedBowl>()))?.first
+        let filed = try? modelContext.freshFirst(CarvedBowl.self)
         filedOpenings = filed?.openings
         filedName = filed?.bowlName ?? "Missing"
     }

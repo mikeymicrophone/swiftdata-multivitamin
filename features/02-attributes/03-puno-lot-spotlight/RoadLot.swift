@@ -23,11 +23,9 @@ final class RoadLot {
 }
 
 struct RoadLotScreen: View {
-    private let container = MemoryStore.containerOrCrash(RoadLot.self)
-
     var body: some View {
         RoadLotEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: RoadLot.self)
     }
 }
 

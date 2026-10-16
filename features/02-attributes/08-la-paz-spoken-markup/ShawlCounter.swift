@@ -25,11 +25,9 @@ final class ShawlCounter {
 }
 
 struct ShawlCounterScreen: View {
-    private let container = MemoryStore.containerOrCrash(ShawlCounter.self)
-
     var body: some View {
         ShawlCounterEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: ShawlCounter.self)
     }
 }
 
@@ -66,9 +64,6 @@ private struct ShawlCounterEditor: View {
                     openCard()
                 }
             }
-        }
-        .onAppear {
-            modelContext.autosaveEnabled = false
         }
     }
 

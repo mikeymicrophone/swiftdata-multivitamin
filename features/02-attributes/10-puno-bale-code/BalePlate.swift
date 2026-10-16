@@ -23,11 +23,9 @@ final class BalePlate {
 }
 
 struct BalePlateScreen: View {
-    private let container = MemoryStore.containerOrCrash(BalePlate.self)
-
     var body: some View {
         BalePlateEditor()
-            .modelContainer(container)
+            .inMemoryStore(for: BalePlate.self)
     }
 }
 
